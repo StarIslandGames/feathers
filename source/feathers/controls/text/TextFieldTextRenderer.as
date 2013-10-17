@@ -1107,7 +1107,9 @@ package feathers.controls.text
 					var newTexture:Texture;
 					if(!this.textSnapshot || this._needsNewTexture)
 					{
+						pushStarling();
 						newTexture = Texture.fromBitmapData(bitmapData, false, false, Starling.contentScaleFactor);
+						popStarling();
 						newTexture.root.onRestore = texture_onRestore;
 					}
 					var snapshot:Image = null;

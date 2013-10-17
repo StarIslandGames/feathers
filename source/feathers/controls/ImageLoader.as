@@ -1135,7 +1135,9 @@ package feathers.controls
 		 */
 		protected function replaceBitmapDataTexture(bitmapData:BitmapData):void
 		{
+			pushStarling();
 			this._texture = Texture.fromBitmapData(bitmapData, false);
+			popStarling();
 			if(Starling.handleLostContext)
 			{
 				//we're saving it so that we can dispose it when we get a new
@@ -1159,7 +1161,9 @@ package feathers.controls
 		 */
 		protected function replaceRawTextureData(rawData:ByteArray):void
 		{
+			pushStarling();
 			this._texture = Texture.fromAtfData(rawData);
+			popStarling();
 			if(Starling.handleLostContext)
 			{
 				//we're saving it so that we can clear it when we get a new
