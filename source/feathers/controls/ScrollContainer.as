@@ -1,6 +1,6 @@
 /*
 Feathers
-Copyright 2012-2013 Joshua Tynjala. All Rights Reserved.
+Copyright 2012-2014 Joshua Tynjala. All Rights Reserved.
 
 This program is free software. You can redistribute and/or modify it in
 accordance with the terms of the accompanying license agreement.
@@ -8,16 +8,29 @@ accordance with the terms of the accompanying license agreement.
 package feathers.controls
 {
 	import feathers.controls.supportClasses.LayoutViewPort;
-	import feathers.core.IFeathersControl;
 	import feathers.layout.ILayout;
 	import feathers.layout.IVirtualLayout;
 
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
-	import starling.events.Event;
 
 	/**
 	 * Dispatched when the container is scrolled.
+	 *
+	 * <p>The properties of the event object have the following values:</p>
+	 * <table class="innertable">
+	 * <tr><th>Property</th><th>Value</th></tr>
+	 * <tr><td><code>bubbles</code></td><td>false</td></tr>
+	 * <tr><td><code>currentTarget</code></td><td>The Object that defines the
+	 *   event listener that handles the event. For example, if you use
+	 *   <code>myButton.addEventListener()</code> to register an event listener,
+	 *   myButton is the value of the <code>currentTarget</code>.</td></tr>
+	 * <tr><td><code>data</code></td><td>null</td></tr>
+	 * <tr><td><code>target</code></td><td>The Object that dispatched the event;
+	 *   it is not always the Object listening for the event. Use the
+	 *   <code>currentTarget</code> property to always access the Object
+	 *   listening for the event.</td></tr>
+	 * </table>
 	 *
 	 * @eventType starling.events.Event.SCROLL
 	 */
@@ -51,7 +64,7 @@ package feathers.controls
 	 * @see http://wiki.starling-framework.org/feathers/scroll-container
 	 * @see feathers.controls.LayoutGroup
 	 */
-	public class ScrollContainer extends Scroller
+	public class ScrollContainer extends Scroller implements IScrollContainer
 	{
 		/**
 		 * @private
@@ -59,21 +72,21 @@ package feathers.controls
 		protected static const INVALIDATION_FLAG_MXML_CONTENT:String = "mxmlContent";
 
 		/**
-		 * An alternate name to use with ScrollContainer to allow a theme to
-		 * give it a toolbar style. If a theme does not provide a skin for the
-		 * toolbar style, the theme will automatically fall back to using the
-		 * default scroll container skin.
+		 * An alternate name to use with <code>ScrollContainer</code> to allow a
+		 * theme to give it a toolbar style. If a theme does not provide a skin
+		 * for the toolbar style, the theme will automatically fall back to
+		 * using the default scroll container skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
 		 * <code>nameList</code> before the component is added to the stage for
-		 * the first time.</p>
+		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the toolbar style is applied to a scroll
 		 * container:</p>
 		 *
 		 * <listing version="3.0">
 		 * var container:ScrollContainer = new ScrollContainer();
-		 * container.nameList.add( ScrollContainer.ALTERNATE_NAME_TOOLBAR );
+		 * container.styleNameList.add( ScrollContainer.ALTERNATE_NAME_TOOLBAR );
 		 * this.addChild( container );</listing>
 		 *
 		 * @see feathers.core.IFeathersControl#nameList
@@ -126,6 +139,20 @@ package feathers.controls
 		public static const SCROLL_BAR_DISPLAY_MODE_NONE:String = "none";
 
 		/**
+		 * The vertical scroll bar will be positioned on the right.
+		 *
+		 * @see feathers.controls.Scroller#verticalScrollBarPosition
+		 */
+		public static const VERTICAL_SCROLL_BAR_POSITION_RIGHT:String = "right";
+
+		/**
+		 * The vertical scroll bar will be positioned on the left.
+		 *
+		 * @see feathers.controls.Scroller#verticalScrollBarPosition
+		 */
+		public static const VERTICAL_SCROLL_BAR_POSITION_LEFT:String = "left";
+
+		/**
 		 * @copy feathers.controls.Scroller#INTERACTION_MODE_TOUCH
 		 *
 		 * @see feathers.controls.Scroller#interactionMode
@@ -151,14 +178,9 @@ package feathers.controls
 		 */
 		public function ScrollContainer()
 		{
-			const oldDisplayListBypassEnabled:Boolean = this.displayListBypassEnabled;
-			this.displayListBypassEnabled = false;
-
 			super();
 			this.layoutViewPort = new LayoutViewPort();
 			this.viewPort = this.layoutViewPort;
-
-			this.displayListBypassEnabled = oldDisplayListBypassEnabled;
 		}
 
 		/**
@@ -255,28 +277,6 @@ package feathers.controls
 		/**
 		 * @private
 		 */
-		override public function set backgroundSkin(value:DisplayObject):void
-		{
-			const oldDisplayListBypassEnabled:Boolean = this.displayListBypassEnabled;
-			this.displayListBypassEnabled = false;
-			super.backgroundSkin = value;
-			this.displayListBypassEnabled = oldDisplayListBypassEnabled;
-		}
-
-		/**
-		 * @private
-		 */
-		override public function set backgroundDisabledSkin(value:DisplayObject):void
-		{
-			const oldDisplayListBypassEnabled:Boolean = this.displayListBypassEnabled;
-			this.displayListBypassEnabled = false;
-			super.backgroundDisabledSkin = value;
-			this.displayListBypassEnabled = oldDisplayListBypassEnabled;
-		}
-
-		/**
-		 * @private
-		 */
 		override public function get numChildren():int
 		{
 			if(!this.displayListBypassEnabled)
@@ -284,6 +284,18 @@ package feathers.controls
 				return super.numChildren;
 			}
 			return DisplayObjectContainer(this.viewPort).numChildren;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function get numRawChildren():int
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			var result:int = super.numChildren;
+			this.displayListBypassEnabled = oldBypass;
+			return result;
 		}
 
 		/**
@@ -299,6 +311,18 @@ package feathers.controls
 		}
 
 		/**
+		 * @inheritDoc
+		 */
+		public function getRawChildByName(name:String):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			var child:DisplayObject = super.getChildByName(name);
+			this.displayListBypassEnabled = oldBypass;
+			return child;
+		}
+
+		/**
 		 * @private
 		 */
 		override public function getChildAt(index:int):DisplayObject
@@ -308,6 +332,37 @@ package feathers.controls
 				return super.getChildAt(index);
 			}
 			return DisplayObjectContainer(this.viewPort).getChildAt(index);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function getRawChildAt(index:int):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			var child:DisplayObject = super.getChildAt(index);
+			this.displayListBypassEnabled = oldBypass;
+			return child;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function addRawChild(child:DisplayObject):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			if(child.parent == this)
+			{
+				super.setChildIndex(child, super.numChildren);
+			}
+			else
+			{
+				child = super.addChildAt(child, super.numChildren);
+			}
+			this.displayListBypassEnabled = oldBypass;
+			return child;
 		}
 
 		/**
@@ -323,6 +378,34 @@ package feathers.controls
 		}
 
 		/**
+		 * @inheritDoc
+		 */
+		public function addRawChildAt(child:DisplayObject, index:int):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			child = super.addChildAt(child, index);
+			this.displayListBypassEnabled = oldBypass;
+			return child;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function removeRawChild(child:DisplayObject, dispose:Boolean = false):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			var index:int = super.getChildIndex(child);
+			if(index >= 0)
+			{
+				super.removeChildAt(index, dispose);
+			}
+			this.displayListBypassEnabled = oldBypass;
+			return child;
+		}
+
+		/**
 		 * @private
 		 */
 		override public function removeChildAt(index:int, dispose:Boolean = false):DisplayObject
@@ -335,6 +418,18 @@ package feathers.controls
 		}
 
 		/**
+		 * @inheritDoc
+		 */
+		public function removeRawChildAt(index:int, dispose:Boolean = false):DisplayObject
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			var child:DisplayObject =  super.removeChildAt(index, dispose);
+			this.displayListBypassEnabled = oldBypass;
+			return child;
+		}
+
+		/**
 		 * @private
 		 */
 		override public function getChildIndex(child:DisplayObject):int
@@ -344,6 +439,17 @@ package feathers.controls
 				return super.getChildIndex(child);
 			}
 			return DisplayObjectContainer(this.viewPort).getChildIndex(child);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function getRawChildIndex(child:DisplayObject):int
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			return super.getChildIndex(child);
+			this.displayListBypassEnabled = oldBypass;
 		}
 
 		/**
@@ -360,6 +466,34 @@ package feathers.controls
 		}
 
 		/**
+		 * @inheritDoc
+		 */
+		public function setRawChildIndex(child:DisplayObject, index:int):void
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			super.setChildIndex(child, index);
+			this.displayListBypassEnabled = oldBypass;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function swapRawChildren(child1:DisplayObject, child2:DisplayObject):void
+		{
+			var index1:int = this.getRawChildIndex(child1);
+			var index2:int = this.getRawChildIndex(child2);
+			if(index1 < 0 || index2 < 0)
+			{
+				throw new ArgumentError("Not a child of this container");
+			}
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			this.swapRawChildrenAt(index1, index2);
+			this.displayListBypassEnabled = oldBypass;
+		}
+
+		/**
 		 * @private
 		 */
 		override public function swapChildrenAt(index1:int, index2:int):void
@@ -370,6 +504,17 @@ package feathers.controls
 				return;
 			}
 			DisplayObjectContainer(this.viewPort).swapChildrenAt(index1, index2);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function swapRawChildrenAt(index1:int, index2:int):void
+		{
+			var oldBypass:Boolean = this.displayListBypassEnabled;
+			this.displayListBypassEnabled = false;
+			super.swapChildrenAt(index1, index2);
+			this.displayListBypassEnabled = oldBypass;
 		}
 
 		/**
@@ -386,25 +531,14 @@ package feathers.controls
 		}
 
 		/**
-		 * @private
+		 * @inheritDoc
 		 */
-		override public function dispatchEvent(event:Event):void
+		public function sortRawChildren(compareFunction:Function):void
 		{
-			const oldDisplayListBypassEnabled:Boolean = this.displayListBypassEnabled;
-			this.displayListBypassEnabled = true;
-			super.dispatchEvent(event);
-			this.displayListBypassEnabled = oldDisplayListBypassEnabled;
-		}
-
-		/**
-		 * @private
-		 */
-		override public function validate():void
-		{
-			const oldDisplayListBypassEnabled:Boolean = this.displayListBypassEnabled;
+			var oldBypass:Boolean = this.displayListBypassEnabled;
 			this.displayListBypassEnabled = false;
-			super.validate();
-			this.displayListBypassEnabled = oldDisplayListBypassEnabled;
+			super.sortChildren(compareFunction);
+			this.displayListBypassEnabled = oldBypass;
 		}
 
 		/**

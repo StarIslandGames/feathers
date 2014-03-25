@@ -1,6 +1,6 @@
 /*
 Feathers
-Copyright 2012-2013 Joshua Tynjala. All Rights Reserved.
+Copyright 2012-2014 Joshua Tynjala. All Rights Reserved.
 
 This program is free software. You can redistribute and/or modify it in
 accordance with the terms of the accompanying license agreement.
@@ -1263,10 +1263,9 @@ package feathers.controls
 		 *
 		 * <p>If the subcomponent has its own subcomponents, their properties
 		 * can be set too, using attribute <code>&#64;</code> notation. For example,
-		 * to set the skin on the thumb of a <code>SimpleScrollBar</code>
-		 * which is in a <code>Scroller</code> which is in a <code>List</code>,
-		 * you can use the following syntax:</p>
-		 * <pre>list.scrollerProperties.&#64;verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
+		 * to set the skin on the thumb which is in a <code>SimpleScrollBar</code>,
+		 * which is in a <code>List</code>, you can use the following syntax:</p>
+		 * <pre>list.verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
 		 *
 		 * <p>Setting properties in a <code>onTrackFactory</code> function
 		 * instead of using <code>onTrackProperties</code> will result in
@@ -1435,10 +1434,9 @@ package feathers.controls
 		 *
 		 * <p>If the subcomponent has its own subcomponents, their properties
 		 * can be set too, using attribute <code>&#64;</code> notation. For example,
-		 * to set the skin on the thumb of a <code>SimpleScrollBar</code>
-		 * which is in a <code>Scroller</code> which is in a <code>List</code>,
-		 * you can use the following syntax:</p>
-		 * <pre>list.scrollerProperties.&#64;verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
+		 * to set the skin on the thumb which is in a <code>SimpleScrollBar</code>,
+		 * which is in a <code>List</code>, you can use the following syntax:</p>
+		 * <pre>list.verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
 		 *
 		 * <p>Setting properties in a <code>offTrackFactory</code> function
 		 * instead of using <code>offTrackProperties</code> will result in
@@ -1605,10 +1603,9 @@ package feathers.controls
 		 *
 		 * <p>If the subcomponent has its own subcomponents, their properties
 		 * can be set too, using attribute <code>&#64;</code> notation. For example,
-		 * to set the skin on the thumb of a <code>SimpleScrollBar</code>
-		 * which is in a <code>Scroller</code> which is in a <code>List</code>,
-		 * you can use the following syntax:</p>
-		 * <pre>list.scrollerProperties.&#64;verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
+		 * to set the skin on the thumb which is in a <code>SimpleScrollBar</code>,
+		 * which is in a <code>List</code>, you can use the following syntax:</p>
+		 * <pre>list.verticalScrollBarProperties.&#64;thumbProperties.defaultSkin = new Image(texture);</pre>
 		 *
 		 * <p>Setting properties in a <code>thumbFactory</code> function instead
 		 * of using <code>thumbProperties</code> will result in better
@@ -1841,7 +1838,7 @@ package feathers.controls
 			const factory:Function = this._thumbFactory != null ? this._thumbFactory : defaultThumbFactory;
 			const thumbName:String = this._customThumbName != null ? this._customThumbName : this.thumbName;
 			this.thumb = Button(factory());
-			this.thumb.nameList.add(thumbName);
+			this.thumb.styleNameList.add(thumbName);
 			this.thumb.keepDownStateOnRollOut = true;
 			this.thumb.addEventListener(TouchEvent.TOUCH, thumb_touchHandler);
 			this.addChild(this.thumb);
@@ -1869,7 +1866,7 @@ package feathers.controls
 			const factory:Function = this._onTrackFactory != null ? this._onTrackFactory : defaultOnTrackFactory;
 			const onTrackName:String = this._customOnTrackName != null ? this._customOnTrackName : this.onTrackName;
 			this.onTrack = Button(factory());
-			this.onTrack.nameList.add(onTrackName);
+			this.onTrack.styleNameList.add(onTrackName);
 			this.onTrack.keepDownStateOnRollOut = true;
 			this.addChildAt(this.onTrack, 0);
 		}
@@ -1898,7 +1895,7 @@ package feathers.controls
 				const factory:Function = this._offTrackFactory != null ? this._offTrackFactory : defaultOffTrackFactory;
 				const offTrackName:String = this._customOffTrackName != null ? this._customOffTrackName : this.offTrackName;
 				this.offTrack = Button(factory());
-				this.offTrack.nameList.add(offTrackName);
+				this.offTrack.styleNameList.add(offTrackName);
 				this.offTrack.keepDownStateOnRollOut = true;
 				this.addChildAt(this.offTrack, 1);
 			}
@@ -1936,11 +1933,8 @@ package feathers.controls
 				offLabelFactory = FeathersControl.defaultTextRendererFactory;
 			}
 			this.offTextRenderer = ITextRenderer(offLabelFactory());
-			this.offTextRenderer.nameList.add(this.offLabelName);
-			if(this.offTextRenderer is FeathersControl)
-			{
-				FeathersControl(this.offTextRenderer).clipRect = new Rectangle();
-			}
+			this.offTextRenderer.styleNameList.add(this.offLabelName);
+			this.offTextRenderer.clipRect = new Rectangle();
 			this.addChildAt(DisplayObject(this.offTextRenderer), index);
 
 			var onLabelFactory:Function = this._onLabelFactory;
@@ -1953,11 +1947,8 @@ package feathers.controls
 				onLabelFactory = FeathersControl.defaultTextRendererFactory;
 			}
 			this.onTextRenderer = ITextRenderer(onLabelFactory());
-			this.onTextRenderer.nameList.add(this.onLabelName);
-			if(this.onTextRenderer is FeathersControl)
-			{
-				FeathersControl(this.onTextRenderer).clipRect = new Rectangle();
-			}
+			this.onTextRenderer.styleNameList.add(this.onLabelName);
+			this.onTextRenderer.clipRect = new Rectangle();
 			this.addChildAt(DisplayObject(this.onTextRenderer), index);
 		}
 
@@ -1981,23 +1972,17 @@ package feathers.controls
 				labelHeight = Math.max(this.onTextRenderer.baseline, this.offTextRenderer.baseline);
 			}
 
-			if(this.onTextRenderer is FeathersControl)
-			{
-				var clipRect:Rectangle = FeathersControl(this.onTextRenderer).clipRect;
-				clipRect.width = maxLabelWidth;
-				clipRect.height = totalLabelHeight;
-				FeathersControl(this.onTextRenderer).clipRect = clipRect;
-			}
+			var clipRect:Rectangle = this.onTextRenderer.clipRect;
+			clipRect.width = maxLabelWidth;
+			clipRect.height = totalLabelHeight;
+			this.onTextRenderer.clipRect = clipRect;
 
 			this.onTextRenderer.y = (this.actualHeight - labelHeight) / 2;
 
-			if(this.offTextRenderer is FeathersControl)
-			{
-				clipRect = FeathersControl(this.offTextRenderer).clipRect;
-				clipRect.width = maxLabelWidth;
-				clipRect.height = totalLabelHeight;
-				FeathersControl(this.offTextRenderer).clipRect = clipRect;
-			}
+			clipRect = this.offTextRenderer.clipRect;
+			clipRect.width = maxLabelWidth;
+			clipRect.height = totalLabelHeight;
+			this.offTextRenderer.clipRect = clipRect;
 
 			this.offTextRenderer.y = (this.actualHeight - labelHeight) / 2;
 
@@ -2013,23 +1998,15 @@ package feathers.controls
 			const thumbOffset:Number = this.thumb.x - this._paddingLeft;
 
 			var onScrollOffset:Number = maxLabelWidth - thumbOffset - (maxLabelWidth - this.onTextRenderer.width) / 2;
-			if(this.onTextRenderer is FeathersControl)
-			{
-				const displayOnLabelRenderer:FeathersControl = FeathersControl(this.onTextRenderer);
-				var currentClipRect:Rectangle = displayOnLabelRenderer.clipRect;
-				currentClipRect.x = onScrollOffset
-				displayOnLabelRenderer.clipRect = currentClipRect;
-			}
+			var currentClipRect:Rectangle = this.onTextRenderer.clipRect;
+			currentClipRect.x = onScrollOffset
+			this.onTextRenderer.clipRect = currentClipRect;
 			this.onTextRenderer.x = this._paddingLeft - onScrollOffset;
 
 			var offScrollOffset:Number = -thumbOffset - (maxLabelWidth - this.offTextRenderer.width) / 2;
-			if(this.offTextRenderer is FeathersControl)
-			{
-				const displayOffLabelRenderer:FeathersControl = FeathersControl(this.offTextRenderer);
-				currentClipRect = displayOffLabelRenderer.clipRect;
-				currentClipRect.x = offScrollOffset
-				displayOffLabelRenderer.clipRect = currentClipRect;
-			}
+			currentClipRect = this.offTextRenderer.clipRect;
+			currentClipRect.x = offScrollOffset
+			this.offTextRenderer.clipRect = currentClipRect;
 			this.offTextRenderer.x = this.actualWidth - this._paddingRight - maxLabelWidth - offScrollOffset;
 
 			if(this._trackLayoutMode == TRACK_LAYOUT_MODE_ON_OFF)

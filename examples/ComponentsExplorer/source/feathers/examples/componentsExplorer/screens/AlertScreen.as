@@ -11,7 +11,6 @@ package feathers.examples.componentsExplorer.screens
 
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
-
 	import starling.events.Event;
 
 	public class AlertScreen extends PanelScreen
@@ -42,7 +41,7 @@ package feathers.examples.componentsExplorer.screens
 			if(!DeviceCapabilities.isTablet(Starling.current.nativeStage))
 			{
 				this._backButton = new Button();
-				this._backButton.nameList.add(Button.ALTERNATE_NAME_BACK_BUTTON);
+				this._backButton.styleNameList.add(Button.ALTERNATE_NAME_BACK_BUTTON);
 				this._backButton.label = "Back";
 				this._backButton.addEventListener(Event.TRIGGERED, backButton_triggeredHandler);
 
@@ -67,10 +66,10 @@ package feathers.examples.componentsExplorer.screens
 
 		private function alertButton_triggeredHandler(event:Event):void
 		{
-			Alert.show("I just wanted you to know that I have something very important to say.", "Alert", new ListCollection(
+			Alert.show("I just wanted you to know that I have a very important message to share with you.", "Alert", new ListCollection(
 			[
 				{ label: "OK" }
-			]))
+			]));
 		}
 	}
 }

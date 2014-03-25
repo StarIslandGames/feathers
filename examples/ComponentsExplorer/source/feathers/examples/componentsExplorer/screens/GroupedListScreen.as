@@ -105,7 +105,7 @@ package feathers.examples.componentsExplorer.screens
 			this._list = new GroupedList();
 			if(this.settings.style == GroupedListSettings.STYLE_INSET)
 			{
-				this._list.nameList.add(GroupedList.ALTERNATE_NAME_INSET_GROUPED_LIST);
+				this._list.styleNameList.add(GroupedList.ALTERNATE_NAME_INSET_GROUPED_LIST);
 			}
 			this._list.dataProvider = new HierarchicalCollection(groups);
 			this._list.typicalItem = { text: "Item 1000" };
@@ -133,9 +133,9 @@ package feathers.examples.componentsExplorer.screens
 			if(!DeviceCapabilities.isTablet(Starling.current.nativeStage))
 			{
 				this._backButton = new Button();
-				this._backButton.nameList.add(Button.ALTERNATE_NAME_BACK_BUTTON);
+				this._backButton.styleNameList.add(Button.ALTERNATE_NAME_BACK_BUTTON);
 				this._backButton.label = "Back";
-				this._backButton.addEventListener(Event.TRIGGERED, backButtontriggeredHandler);
+				this._backButton.addEventListener(Event.TRIGGERED, backButton_triggeredHandler);
 
 				this.headerProperties.leftItems = new <DisplayObject>
 				[
@@ -147,7 +147,7 @@ package feathers.examples.componentsExplorer.screens
 
 			this._settingsButton = new Button();
 			this._settingsButton.label = "Settings";
-			this._settingsButton.addEventListener(Event.TRIGGERED, settingsButtontriggeredHandler);
+			this._settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
 
 			this.headerProperties.rightItems = new <DisplayObject>
 			[
@@ -160,12 +160,12 @@ package feathers.examples.componentsExplorer.screens
 			this.dispatchEventWith(Event.COMPLETE);
 		}
 		
-		private function backButtontriggeredHandler(event:Event):void
+		private function backButton_triggeredHandler(event:Event):void
 		{
 			this.onBackButton();
 		}
 
-		private function settingsButtontriggeredHandler(event:Event):void
+		private function settingsButton_triggeredHandler(event:Event):void
 		{
 			this.dispatchEventWith(SHOW_SETTINGS);
 		}
