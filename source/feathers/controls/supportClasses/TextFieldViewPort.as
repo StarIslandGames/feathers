@@ -841,7 +841,7 @@ package feathers.controls.supportClasses
 
 		private function removedFromStageHandler(event:Event):void
 		{
-			Starling.current.nativeStage.removeChild(this._textFieldContainer);
+			this._textFieldContainer.parent.removeChild(this._textFieldContainer);
 		}
 	}
 }
