@@ -559,6 +559,7 @@ package feathers.controls.text
 			const sizeInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_SIZE);
 			const stateInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STATE);
 
+			pushStarling();
 			if(stylesInvalid || stateInvalid)
 			{
 				this.refreshTextFormat();
@@ -576,6 +577,7 @@ package feathers.controls.text
 				this.layoutCharacters(HELPER_POINT);
 				this.setSizeInternal(HELPER_POINT.x, HELPER_POINT.y, false);
 			}
+			popStarling();
 		}
 
 		/**

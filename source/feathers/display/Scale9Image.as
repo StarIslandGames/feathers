@@ -455,6 +455,7 @@ package feathers.display
 				return;
 			}
 			this._isValidating = true;
+			pushStarling();
 			if(this._propertiesChanged || this._layoutChanged || this._renderingChanged)
 			{
 				this._batch.batchable = !this._useSeparateBatch;
@@ -604,6 +605,7 @@ package feathers.display
 			this._renderingChanged = false;
 			this._isInvalid = false;
 			this._isValidating = false;
+			popStarling();
 		}
 
 		/**
