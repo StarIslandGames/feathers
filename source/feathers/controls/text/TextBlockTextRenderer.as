@@ -9,6 +9,7 @@ package feathers.controls.text
 {
 	import feathers.core.FeathersControl;
 	import feathers.core.ITextRenderer;
+	import feathers.skins.IStyleProvider;
 
 	import flash.display.BitmapData;
 	import flash.display.DisplayObjectContainer;
@@ -51,7 +52,7 @@ package feathers.controls.text
 	 * caution when displaying a lot of text.</p>
 	 *
 	 * @see http://wiki.starling-framework.org/feathers/text-renderers
-	 * @see flash.text.engine.TextBlock
+	 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html flash.text.engine.TextBlock
 	 */
 	public class TextBlockTextRenderer extends FeathersControl implements ITextRenderer
 	{
@@ -71,25 +72,9 @@ package feathers.controls.text
 		private static const HELPER_RECTANGLE:Rectangle = new Rectangle();
 
 		/**
-		 * The text will be positioned to the left edge.
-		 *
-		 * @see #textAlign
+		 * @private
 		 */
-		public static const TEXT_ALIGN_LEFT:String = "left";
-
-		/**
-		 * The text will be centered horizontally.
-		 *
-		 * @see #textAlign
-		 */
-		public static const TEXT_ALIGN_CENTER:String = "center";
-
-		/**
-		 * The text will be positioned to the right edge.
-		 *
-		 * @see #textAlign
-		 */
-		public static const TEXT_ALIGN_RIGHT:String = "right";
+		private static var HELPER_TEXT_LINES:Vector.<TextLine> = new <TextLine>[];
 
 		/**
 		 * @private
@@ -113,10 +98,41 @@ package feathers.controls.text
 		protected static const FUZZY_TRUNCATION_DIFFERENCE:Number = 0.000001;
 
 		/**
+		 * The text will be positioned to the left edge.
+		 *
+		 * @see #textAlign
+		 */
+		public static const TEXT_ALIGN_LEFT:String = "left";
+
+		/**
+		 * The text will be centered horizontally.
+		 *
+		 * @see #textAlign
+		 */
+		public static const TEXT_ALIGN_CENTER:String = "center";
+
+		/**
+		 * The text will be positioned to the right edge.
+		 *
+		 * @see #textAlign
+		 */
+		public static const TEXT_ALIGN_RIGHT:String = "right";
+
+		/**
+		 * The default <code>IStyleProvider</code> for all <code>TextBlockTextRenderer</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
+
+		/**
 		 * Constructor.
 		 */
 		public function TextBlockTextRenderer()
 		{
+			super();
 			this.isQuickHitAreaEnabled = true;
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
@@ -194,6 +210,14 @@ package feathers.controls.text
 		 * @private
 		 */
 		protected var _textElement:TextElement;
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return TextBlockTextRenderer.styleProvider;
+		}
 
 		/**
 		 * @private
@@ -304,7 +328,7 @@ package feathers.controls.text
 		 * @default null
 		 *
 		 * @see #disabledElementFormat
-		 * @see flash.text.engine.ElementFormat
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/ElementFormat.html flash.text.engine.ElementFormat
 		 */
 		public function get elementFormat():ElementFormat
 		{
@@ -343,7 +367,7 @@ package feathers.controls.text
 		 * @default null
 		 *
 		 * @see #elementFormat
-		 * @see flash.text.engine.ElementFormat
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/ElementFormat.html flash.text.engine.ElementFormat
 		 */
 		public function get disabledElementFormat():ElementFormat
 		{
@@ -497,7 +521,7 @@ package feathers.controls.text
 		 *
 		 * @default true
 		 *
-		 * @see flash.text.engine.TextBlock#applyNonLinearFontScaling
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#applyNonLinearFontScaling Full description of flash.text.engine.TextBlock.applyNonLinearFontScaling in Adobe's Flash Platform API Reference
 		 */
 		public function get applyNonLinearFontScaling():Boolean
 		{
@@ -532,7 +556,7 @@ package feathers.controls.text
 		 *
 		 * @default null
 		 *
-		 * @see flash.text.engine.TextBlock#baselineFontDescription
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#baselineFontDescription Full description of flash.text.engine.TextBlock.baselineFontDescription in Adobe's Flash Platform API Reference
 		 * @see #baselineFontSize
 		 */
 		public function get baselineFontDescription():FontDescription
@@ -569,7 +593,7 @@ package feathers.controls.text
 		 *
 		 * @default 12
 		 *
-		 * @see flash.text.engine.TextBlock#baselineFontSize
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#baselineFontSize Full description of flash.text.engine.TextBlock.baselineFontSize in Adobe's Flash Platform API Reference
 		 * @see #baselineFontDescription
 		 */
 		public function get baselineFontSize():Number
@@ -605,8 +629,8 @@ package feathers.controls.text
 		 *
 		 * @default TextBaseline.ROMAN
 		 *
-		 * @see flash.text.engine.TextBlock#baselineZero
-		 * @see flash.text.engine.TextBaseline
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#baselineZero Full description of flash.text.engine.TextBlock.baselineZero in Adobe's Flash Platform API Reference
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBaseline.html flash.text.engine.TextBaseline
 		 */
 		public function get baselineZero():String
 		{
@@ -642,7 +666,7 @@ package feathers.controls.text
 		 *
 		 * @default 0
 		 *
-		 * @see flash.text.engine.TextBlock#bidiLevel
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#bidiLevel Full description of flash.text.engine.TextBlock.bidiLevel in Adobe's Flash Platform API Reference
 		 */
 		public function get bidiLevel():int
 		{
@@ -677,8 +701,8 @@ package feathers.controls.text
 		 *
 		 * @default TextRotation.ROTATE_0
 		 *
-		 * @see flash.text.engine.TextBlock#lineRotation
-		 * @see flash.text.engine.TextRotation
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#lineRotation Full description of flash.text.engine.TextBlock.lineRotation in Adobe's Flash Platform API Reference
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextRotation.html flash.text.engine.TextRotation
 		 */
 		public function get lineRotation():String
 		{
@@ -714,7 +738,7 @@ package feathers.controls.text
 		 *
 		 * @default null
 		 *
-		 * @see flash.text.engine.TextBlock#tabStops
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#tabStops Full description of flash.text.engine.TextBlock.tabStops in Adobe's Flash Platform API Reference
 		 */
 		public function get tabStops():Vector.<TabStop>
 		{
@@ -745,9 +769,9 @@ package feathers.controls.text
 		 * <p>In the following example, the text justifier is changed:</p>
 		 *
 		 * <listing version="3.0">
-		 * textRenderer.textAlign = new SpaceJustifier( "en", LineJustification.ALL_BUT_LAST );</listing>
+		 * textRenderer.textJustifier = new SpaceJustifier( "en", LineJustification.ALL_BUT_LAST );</listing>
 		 *
-		 * @see flash.text.engine.TextBlock#textJustifier
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#textJustifier Full description of flash.text.engine.TextBlock.textJustifier in Adobe's Flash Platform API Reference
 		 */
 		public function get textJustifier():TextJustifier
 		{
@@ -781,7 +805,7 @@ package feathers.controls.text
 		 * <listing version="3.0">
 		 * textRenderer.userData = { author: "William Shakespeare", title: "Much Ado About Nothing" };</listing>
 		 *
-		 * @see flash.text.engine.TextBlock#userData
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/engine/TextBlock.html#userData Full description of flash.text.engine.TextBlock.userData in Adobe's Flash Platform API Reference
 		 */
 		public function get userData():*
 		{
@@ -886,6 +910,8 @@ package feathers.controls.text
 		 * renderer.nativeFilters = [ new GlowFilter() ];</listing>
 		 *
 		 * @default null
+		 *
+		 * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/DisplayObject.html#filters Full description of flash.display.DisplayObject.filters in Adobe's Flash Platform API Reference
 		 */
 		public function get nativeFilters():Array
 		{
@@ -1031,8 +1057,8 @@ package feathers.controls.text
 				return result;
 			}
 
-			const needsWidth:Boolean = isNaN(this.explicitWidth);
-			const needsHeight:Boolean = isNaN(this.explicitHeight);
+			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				result.x = this.explicitWidth;
@@ -1085,9 +1111,9 @@ package feathers.controls.text
 		 */
 		protected function commit():void
 		{
-			const stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
-			const dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
-			const stateInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STATE);
+			var stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
+			var dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
+			var stateInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STATE);
 
 			if(dataInvalid || stylesInvalid || stateInvalid)
 			{
@@ -1133,8 +1159,8 @@ package feathers.controls.text
 				result = new Point();
 			}
 
-			var needsWidth:Boolean = isNaN(this.explicitWidth);
-			var needsHeight:Boolean = isNaN(this.explicitHeight);
+			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
 			var newWidth:Number = this.explicitWidth;
 			var newHeight:Number = this.explicitHeight;
 			if(needsWidth)
@@ -1174,8 +1200,8 @@ package feathers.controls.text
 		 */
 		protected function layout(sizeInvalid:Boolean):void
 		{
-			const stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
-			const dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
+			var stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
+			var dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
 
 			if(sizeInvalid)
 			{
@@ -1197,7 +1223,7 @@ package feathers.controls.text
 				{
 					this._snapshotHeight = getNextPowerOfTwo(rectangleSnapshotHeight);
 				}
-				const textureRoot:ConcreteTexture = this.textSnapshot ? this.textSnapshot.texture.root : null;
+				var textureRoot:ConcreteTexture = this.textSnapshot ? this.textSnapshot.texture.root : null;
 				this._needsNewTexture = this._needsNewTexture || !this.textSnapshot || this._snapshotWidth != textureRoot.width || this._snapshotHeight != textureRoot.height;
 			}
 
@@ -1240,8 +1266,8 @@ package feathers.controls.text
 		 */
 		protected function autoSizeIfNeeded():Boolean
 		{
-			const needsWidth:Boolean = isNaN(this.explicitWidth);
-			const needsHeight:Boolean = isNaN(this.explicitHeight);
+			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				return false;
@@ -1349,7 +1375,7 @@ package feathers.controls.text
 						else
 						{
 							//this is faster, if we haven't resized the bitmapdata
-							const existingTexture:Texture = snapshot.texture;
+							var existingTexture:Texture = snapshot.texture;
 							existingTexture.root.uploadBitmapData(bitmapData);
 						}
 					}
@@ -1440,10 +1466,11 @@ package feathers.controls.text
 				this._textElement.text = this._text;
 				this._truncationOffset = 0;
 			}
-			var textLineCache:Vector.<TextLine>;
+			HELPER_TEXT_LINES.length = 0;
 			var yPosition:Number = 0;
 			var lineCount:int = textLines.length;
 			var lastLine:TextLine;
+			var cacheIndex:int = lineCount;
 			for(var i:int = 0; i < lineCount; i++)
 			{
 				var line:TextLine = textLines[i];
@@ -1451,6 +1478,7 @@ package feathers.controls.text
 				{
 					line.filters = this._nativeFilters;
 					lastLine = line;
+					textLines[i] = line;
 					continue;
 				}
 				else
@@ -1462,17 +1490,24 @@ package feathers.controls.text
 						//we're using this value in the next loop
 						lastLine = null;
 					}
-					textLineCache = textLines.splice(i, lineCount - i);
+					cacheIndex = i;
 					break;
 				}
 			}
+			//copy the invalid text lines over to the helper vector so that we
+			//can reuse them
+			for(; i < lineCount; i++)
+			{
+				HELPER_TEXT_LINES[int(i - cacheIndex)] = textLines[i];
+			}
+			textLines.length = cacheIndex;
 
 			if(width >= 0)
 			{
 				var lineStartIndex:int = 0;
 				var canTruncate:Boolean = this._truncateToFit && this._textElement && !this._wordWrap;
 				var pushIndex:int = textLines.length;
-				var inactiveTextLineCount:int = textLineCache ? textLineCache.length : 0;
+				var inactiveTextLineCount:int = HELPER_TEXT_LINES.length;
 				while(true)
 				{
 					var previousLine:TextLine = line;
@@ -1483,11 +1518,11 @@ package feathers.controls.text
 					}
 					if(inactiveTextLineCount > 0)
 					{
-						var inactiveLine:TextLine = textLineCache[0];
+						var inactiveLine:TextLine = HELPER_TEXT_LINES[0];
 						line = this.textBlock.recreateTextLine(inactiveLine, previousLine, lineWidth, 0, true);
 						if(line)
 						{
-							textLineCache.shift();
+							HELPER_TEXT_LINES.shift();
 							inactiveTextLineCount--;
 						}
 					}
@@ -1536,7 +1571,7 @@ package feathers.controls.text
 							this._textElement.text += this._text.substr(lineBreakIndex);
 						}
 						line = this.textBlock.recreateTextLine(line, null, lineWidth, 0, true);
-						if(truncatedTextLength == 0)
+						if(truncatedTextLength <= 0)
 						{
 							break;
 						}
@@ -1573,17 +1608,13 @@ package feathers.controls.text
 				}
 			}
 
-			if(!textLineCache)
-			{
-				return;
-			}
-
-			inactiveTextLineCount = textLineCache.length;
+			inactiveTextLineCount = HELPER_TEXT_LINES.length;
 			for(i = 0; i < inactiveTextLineCount; i++)
 			{
-				line = textLineCache.shift();
+				line = HELPER_TEXT_LINES[i];
 				textLineParent.removeChild(line);
 			}
+			HELPER_TEXT_LINES.length = 0;
 		}
 
 		/**

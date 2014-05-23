@@ -10,6 +10,7 @@ package feathers.controls
 	import feathers.core.FeathersControl;
 	import feathers.core.IValidating;
 	import feathers.events.FeathersEventType;
+	import feathers.skins.IStyleProvider;
 
 	import flash.errors.IllegalOperationError;
 	import flash.geom.Rectangle;
@@ -129,6 +130,11 @@ package feathers.controls
 	public class ScreenNavigator extends FeathersControl
 	{
 		/**
+		 * @private
+		 */
+		protected static var SIGNAL_TYPE:Class;
+
+		/**
 		 * The screen navigator will auto size itself to fill the entire stage.
 		 *
 		 * @see #autoSizeMode
@@ -143,9 +149,13 @@ package feathers.controls
 		public static const AUTO_SIZE_MODE_CONTENT:String = "content";
 
 		/**
-		 * @private
+		 * The default <code>IStyleProvider</code> for all <code>ScreenNavigator</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
 		 */
-		protected static var SIGNAL_TYPE:Class;
+		public static var styleProvider:IStyleProvider;
 
 		/**
 		 * The default transition function.
@@ -175,6 +185,14 @@ package feathers.controls
 			}
 			this.addEventListener(Event.ADDED_TO_STAGE, screenNavigator_addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, screenNavigator_removedFromStageHandler);
+		}
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return ScreenNavigator.styleProvider;
 		}
 
 		/**
@@ -388,18 +406,18 @@ package feathers.controls
 			
 			this._transitionIsActive = true;
 
-			const item:ScreenNavigatorItem = ScreenNavigatorItem(this._screens[id]);
+			var item:ScreenNavigatorItem = ScreenNavigatorItem(this._screens[id]);
 			this._activeScreen = item.getScreen();
 			if(this._activeScreen is IScreen)
 			{
-				const screen:IScreen = IScreen(this._activeScreen);
+				var screen:IScreen = IScreen(this._activeScreen);
 				screen.screenID = id;
 				screen.owner = this;
 			}
 			this._activeScreenID = id;
 
-			const events:Object = item.events;
-			const savedScreenEvents:Object = {};
+			var events:Object = item.events;
+			var savedScreenEvents:Object = {};
 			for(var eventName:String in events)
 			{
 				var signal:Object = this._activeScreen.hasOwnProperty(eventName) ? (this._activeScreen[eventName] as SIGNAL_TYPE) : null;
@@ -486,9 +504,9 @@ package feathers.controls
 				return;
 			}
 
-			const item:ScreenNavigatorItem = ScreenNavigatorItem(this._screens[this._activeScreenID]);
-			const events:Object = item.events;
-			const savedScreenEvents:Object = this._screenEvents[this._activeScreenID];
+			var item:ScreenNavigatorItem = ScreenNavigatorItem(this._screens[this._activeScreenID]);
+			var events:Object = item.events;
+			var savedScreenEvents:Object = this._screenEvents[this._activeScreenID];
 			for(var eventName:String in events)
 			{
 				var signal:Object = this._activeScreen.hasOwnProperty(eventName) ? (this._activeScreen[eventName] as SIGNAL_TYPE) : null;
@@ -628,8 +646,8 @@ package feathers.controls
 		override protected function draw():void
 		{
 			var sizeInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_SIZE);
-			const selectionInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_SELECTED);
-			const stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
+			var selectionInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_SELECTED);
+			var stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
 
 			sizeInvalid = this.autoSizeIfNeeded() || sizeInvalid;
 
@@ -686,8 +704,8 @@ package feathers.controls
 		 */
 		protected function autoSizeIfNeeded():Boolean
 		{
-			const needsWidth:Boolean = isNaN(this.explicitWidth);
-			const needsHeight:Boolean = isNaN(this.explicitHeight);
+			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				return false;
@@ -737,11 +755,11 @@ package feathers.controls
 			this.dispatchEventWith(FeathersEventType.TRANSITION_COMPLETE);
 			if(this._previousScreenInTransition)
 			{
-				const item:ScreenNavigatorItem = this._screens[this._previousScreenInTransitionID];
-				const canBeDisposed:Boolean = !(item.screen is DisplayObject);
+				var item:ScreenNavigatorItem = this._screens[this._previousScreenInTransitionID];
+				var canBeDisposed:Boolean = !(item.screen is DisplayObject);
 				if(this._previousScreenInTransition is IScreen)
 				{
-					const screen:IScreen = IScreen(this._previousScreenInTransition);
+					var screen:IScreen = IScreen(this._previousScreenInTransition);
 					screen.screenID = null;
 					screen.owner = null;
 				}
@@ -772,8 +790,8 @@ package feathers.controls
 		 */
 		protected function createScreenEventListener(screenID:String):Function
 		{
-			const self:ScreenNavigator = this;
-			const eventListener:Function = function(event:Event):void
+			var self:ScreenNavigator = this;
+			var eventListener:Function = function(event:Event):void
 			{
 				self.showScreen(screenID);
 			};
@@ -786,7 +804,7 @@ package feathers.controls
 		 */
 		protected function createScreenSignalListener(screenID:String, signal:Object):Function
 		{
-			const self:ScreenNavigator = this;
+			var self:ScreenNavigator = this;
 			if(signal.valueClasses.length == 1)
 			{
 				//shortcut to avoid the allocation of the rest array

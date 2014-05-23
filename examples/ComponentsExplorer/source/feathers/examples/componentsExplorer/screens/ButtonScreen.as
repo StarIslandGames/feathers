@@ -3,9 +3,11 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.Button;
 	import feathers.controls.ImageLoader;
 	import feathers.controls.PanelScreen;
+	import feathers.controls.ToggleButton;
 	import feathers.events.FeathersEventType;
 	import feathers.examples.componentsExplorer.data.EmbeddedAssets;
 	import feathers.layout.VerticalLayout;
+	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
 	import starling.core.Starling;
@@ -17,17 +19,17 @@ package feathers.examples.componentsExplorer.screens
 
 	public class ButtonScreen extends PanelScreen
 	{
+		public static var styleProvider:IStyleProvider;
 		
 		public function ButtonScreen()
 		{
 			super();
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
 
 		private var _normalButton:Button;
 		private var _disabledButton:Button;
 		private var _iconButton:Button;
-		private var _toggleButton:Button;
+		private var _toggleButton:ToggleButton;
 		private var _callToActionButton:Button;
 		private var _quietButton:Button;
 		private var _dangerButton:Button;
@@ -37,16 +39,16 @@ package feathers.examples.componentsExplorer.screens
 		private var _backButton:Button;
 		
 		private var _icon:ImageLoader;
-		
-		protected function initializeHandler(event:Event):void
+
+		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			const verticalLayout:VerticalLayout = new VerticalLayout();
-			verticalLayout.horizontalAlign = VerticalLayout.HORIZONTAL_ALIGN_CENTER;
-			verticalLayout.verticalAlign = VerticalLayout.VERTICAL_ALIGN_TOP;
-			verticalLayout.padding = 20 * this.dpiScale;
-			verticalLayout.gap = 16 * this.dpiScale;
-			verticalLayout.manageVisibility = true;
-			this.layout = verticalLayout;
+			return ButtonScreen.styleProvider;
+		}
+		
+		override protected function initialize():void
+		{
+			//never forget to call super.initialize()
+			super.initialize();
 			
 			this._normalButton = new Button();
 			this._normalButton.label = "Normal Button";
@@ -70,9 +72,8 @@ package feathers.examples.componentsExplorer.screens
 			this._iconButton.defaultIcon = this._icon;
 			this.addChild(this._iconButton);
 
-			this._toggleButton = new Button();
+			this._toggleButton = new ToggleButton();
 			this._toggleButton.label = "Toggle Button";
-			this._toggleButton.isToggle = true;
 			this._toggleButton.isSelected = true;
 			this._toggleButton.addEventListener(Event.CHANGE, toggleButton_changeHandler);
 			this.addChild(this._toggleButton);

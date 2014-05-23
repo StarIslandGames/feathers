@@ -8,6 +8,7 @@ accordance with the terms of the accompanying license agreement.
 package feathers.controls
 {
 	import feathers.events.FeathersEventType;
+	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 	import feathers.utils.display.calculateScaleRatioToFit;
 	import feathers.utils.display.getDisplayObjectDepthFromStage;
@@ -56,6 +57,15 @@ package feathers.controls
 	public class Screen extends LayoutGroup implements IScreen
 	{
 		/**
+		 * The default <code>IStyleProvider</code> for all <code>Screen</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
+
+		/**
 		 * Constructor.
 		 */
 		public function Screen()
@@ -64,6 +74,14 @@ package feathers.controls
 			this.addEventListener(FeathersEventType.RESIZE, screen_resizeHandler);
 			super();
 			this.originalDPI = DeviceCapabilities.dpi;
+		}
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return Screen.styleProvider;
 		}
 		
 		/**
@@ -148,10 +166,10 @@ package feathers.controls
 		protected var _originalDPI:int = 0;
 		
 		/**
-		 * The original intended DPI of the application. This value cannot be
-		 * automatically detected and it must be set manually.
+		 * The original intended screen density of the application. This value
+		 * cannot be automatically detected and it must be set manually.
 		 *
-		 * <p>In the following example, the original DPI is customized:</p>
+		 * <p>In the following example, the original screen density is customized:</p>
 		 *
 		 * <listing version="3.0">
 		 * this.originalDPI = 326; //iPhone with Retina Display</listing>
@@ -230,8 +248,8 @@ package feathers.controls
 		 * <code>actualWidth</code>, and <code>actualHeight</code>,
 		 * to calculate a scale value that will allow all content will fit
 		 * within the current stage bounds using the same relative layout. This
-		 * scale value does not account for differences between the original DPI
-		 * and the current device's DPI.
+		 * scale value does not account for differences between the original
+		 * screen density and the current device's screen density.
 		 *
 		 * @see #originalWidth
 		 * @see #originalHeight
@@ -249,12 +267,12 @@ package feathers.controls
 		/**
 		 * Uses <code>originalDPI</code> and <code>DeviceCapabilities.dpi</code>
 		 * to calculate a scale value to allow all content to be the same
-		 * physical size (in inches). Using this value will have a much larger
-		 * effect on the layout of the content, but it can ensure that
-		 * interactive items won't be scaled too small to affect the accuracy
-		 * of touches. Likewise, it won't scale items to become ridiculously
-		 * physically large. Most useful when targeting many different platforms
-		 * with the same code.
+		 * physical size (in inches or centimeters). Using this value will have
+		 * a much larger effect on the layout of the content, but it can ensure
+		 * that interactive items won't be scaled too small to affect the
+		 * accuracy of touches. Likewise, it won't scale items to become
+		 * ridiculously physically large. Most useful when targeting many
+		 * different platforms with the same code.
 		 *
 		 * @see #originalDPI
 		 * @see feathers.system.DeviceCapabilities#dpi
@@ -342,10 +360,10 @@ package feathers.controls
 			{
 				return;
 			}
-			const loaderInfo:LoaderInfo = DisplayObjectContainer(Starling.current.nativeStage.root).getChildAt(0).loaderInfo;
+			var loaderInfo:LoaderInfo = DisplayObjectContainer(Starling.current.nativeStage.root).getChildAt(0).loaderInfo;
 			//if originalWidth or originalHeight is NaN, it's because the Screen
 			//has been added to the display list, and we really need values now.
-			if(isNaN(this._originalWidth))
+			if(this._originalWidth != this._originalWidth) //isNaN
 			{
 				try
 				{
@@ -356,7 +374,7 @@ package feathers.controls
 					this._originalWidth = this.stage.stageWidth;
 				}
 			}
-			if(isNaN(this._originalHeight))
+			if(this._originalHeight != this._originalHeight) //isNaN
 			{
 				try
 				{

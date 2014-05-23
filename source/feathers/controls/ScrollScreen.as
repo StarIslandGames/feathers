@@ -7,6 +7,7 @@ accordance with the terms of the accompanying license agreement.
 */
 package feathers.controls
 {
+	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 	import feathers.utils.display.getDisplayObjectDepthFromStage;
 
@@ -135,6 +136,29 @@ package feathers.controls
 		public static const INTERACTION_MODE_TOUCH_AND_SCROLL_BARS:String = "touchAndScrollBars";
 
 		/**
+		 * @copy feathers.controls.Scroller#DECELERATION_RATE_NORMAL
+		 *
+		 * @see feathers.controls.Scroller#decelerationRate
+		 */
+		public static const DECELERATION_RATE_NORMAL:Number = 0.998;
+
+		/**
+		 * @copy feathers.controls.Scroller#DECELERATION_RATE_FAST
+		 *
+		 * @see feathers.controls.Scroller#decelerationRate
+		 */
+		public static const DECELERATION_RATE_FAST:Number = 0.99;
+
+		/**
+		 * The default <code>IStyleProvider</code> for all <code>ScrollScreen</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
+
+		/**
 		 * Constructor.
 		 */
 		public function ScrollScreen()
@@ -142,6 +166,14 @@ package feathers.controls
 			this.addEventListener(Event.ADDED_TO_STAGE, scrollScreen_addedToStageHandler);
 			super();
 			this.originalDPI = DeviceCapabilities.dpi;
+		}
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return ScrollScreen.styleProvider;
 		}
 
 		/**
@@ -192,10 +224,10 @@ package feathers.controls
 		protected var _originalDPI:int = 0;
 
 		/**
-		 * The original intended DPI of the application. This value cannot be
-		 * automatically detected and it must be set manually.
+		 * The original intended screen density of the application. This value
+		 * cannot be automatically detected and it must be set manually.
 		 *
-		 * <p>In the following example, the original DPI is customized:</p>
+		 * <p>In the following example, the original screen density is customized:</p>
 		 *
 		 * <listing version="3.0">
 		 * this.originalDPI = 326; //iPhone with Retina Display</listing>
@@ -230,12 +262,12 @@ package feathers.controls
 		/**
 		 * Uses <code>originalDPI</code> and <code>DeviceCapabilities.dpi</code>
 		 * to calculate a scale value to allow all content to be the same
-		 * physical size (in inches). Using this value will have a much larger
-		 * effect on the layout of the content, but it can ensure that
-		 * interactive items won't be scaled too small to affect the accuracy
-		 * of touches. Likewise, it won't scale items to become ridiculously
-		 * physically large. Most useful when targeting many different platforms
-		 * with the same code.
+		 * physical size (in inches or centimeters). Using this value will have
+		 * a much larger effect on the layout of the content, but it can ensure
+		 * that interactive items won't be scaled too small to affect the
+		 * accuracy of touches. Likewise, it won't scale items to become
+		 * ridiculously physically large. Most useful when targeting many
+		 * different platforms with the same code.
 		 *
 		 * @see #originalDPI
 		 * @see feathers.system.DeviceCapabilities#dpi

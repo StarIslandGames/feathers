@@ -12,6 +12,7 @@ package feathers.core
 	import feathers.events.FeathersEventType;
 	import feathers.layout.ILayoutData;
 	import feathers.layout.ILayoutDisplayObject;
+	import feathers.skins.IStyleProvider;
 	import feathers.utils.display.getDisplayObjectDepthFromStage;
 
 	import flash.errors.IllegalOperationError;
@@ -240,6 +241,7 @@ package feathers.core
 			{
 				throw new Error(ABSTRACT_CLASS_ERROR);
 			}
+			this._styleProvider = this.defaultStyleProvider;
 			this.addEventListener(Event.ADDED_TO_STAGE, feathersControl_addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, feathersControl_removedFromStageHandler);
 			this.addEventListener(Event.FLATTEN, feathersControl_flattenHandler);
@@ -317,6 +319,61 @@ package feathers.core
 		public function get nameList():TokenList
 		{
 			return this._styleNameList;
+		}
+
+		/**
+		 * @private
+		 */
+		protected var _styleProvider:IStyleProvider;
+
+		/**
+		 * After the component initializes, it may be passed to a style provider
+		 * to set skin and style properties.
+		 *
+		 * @default null
+		 *
+		 * @see #styleName
+		 * @see #styleNameList
+		 * @see http://wiki.starling-framework.org/feathers/custom-themes
+		 */
+		public function get styleProvider():IStyleProvider
+		{
+			return this._styleProvider;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set styleProvider(value:IStyleProvider):void
+		{
+			if(this.isInitialized)
+			{
+				throw new IllegalOperationError("The styleProvider property cannot be changed after a component is initialized.");
+			}
+			this._styleProvider = value;
+		}
+
+		/**
+		 * When the <code>FeathersControl</code> constructor is called, the
+		 * <code>styleProvider</code> property is set to this value. May be
+		 * <code>null</code>.
+		 *
+		 * <p>Typically, a subclass of <code>FeathersControl</code> will
+		 * override this function to return its static <code>styleProvider</code>
+		 * value. For instance, <code>feathers.controls.Button</code> overrides
+		 * this function, and its implementation looks like this:</p>
+		 *
+		 * <listing version="3.0">
+		 * override protected function get defaultStyleProvider():IStyleProvider
+		 * {
+		 *     return Button.styleProvider;
+		 * }</listing>
+		 *
+		 * @see #styleProvider
+		 */
+		protected function get defaultStyleProvider():IStyleProvider
+		{
+			return null;
 		}
 
 		/**
@@ -499,8 +556,8 @@ package feathers.core
 			{
 				return;
 			}
-			const valueIsNaN:Boolean = isNaN(value);
-			if(valueIsNaN && isNaN(this.explicitWidth))
+			var valueIsNaN:Boolean = value != value; //isNaN
+			if(valueIsNaN && this.explicitWidth != this.explicitWidth)
 			{
 				return;
 			}
@@ -583,8 +640,8 @@ package feathers.core
 			{
 				return;
 			}
-			const valueIsNaN:Boolean = isNaN(value);
-			if(valueIsNaN && isNaN(this.explicitHeight))
+			var valueIsNaN:Boolean = value != value; //isNaN
+			if(valueIsNaN && this.explicitHeight != this.explicitHeight)
 			{
 				return;
 			}
@@ -632,7 +689,7 @@ package feathers.core
 				return;
 			}
 			this._minTouchWidth = value;
-			this.invalidate(INVALIDATION_FLAG_SIZE);
+			this.refreshHitAreaX();
 		}
 
 		/**
@@ -667,7 +724,7 @@ package feathers.core
 				return;
 			}
 			this._minTouchHeight = value;
-			this.invalidate(INVALIDATION_FLAG_SIZE);
+			this.refreshHitAreaY();
 		}
 
 		/**
@@ -704,7 +761,7 @@ package feathers.core
 			{
 				return;
 			}
-			if(isNaN(value))
+			if(value != value) //isNaN
 			{
 				throw new ArgumentError("minWidth cannot be NaN");
 			}
@@ -746,7 +803,7 @@ package feathers.core
 			{
 				return;
 			}
-			if(isNaN(value))
+			if(value != value) //isNaN
 			{
 				throw new ArgumentError("minHeight cannot be NaN");
 			}
@@ -788,7 +845,7 @@ package feathers.core
 			{
 				return;
 			}
-			if(isNaN(value))
+			if(value != value) //isNaN
 			{
 				throw new ArgumentError("maxWidth cannot be NaN");
 			}
@@ -830,7 +887,7 @@ package feathers.core
 			{
 				return;
 			}
-			if(isNaN(value))
+			if(value != value) //isNaN
 			{
 				throw new ArgumentError("maxHeight cannot be NaN");
 			}
@@ -1412,7 +1469,7 @@ package feathers.core
 				{
 					return null;
 				}
-				const clipRect:Rectangle = this.clipRect;
+				var clipRect:Rectangle = this.clipRect;
 				if(clipRect && !clipRect.containsPoint(localPoint))
 				{
 					return null;
@@ -1448,7 +1505,7 @@ package feathers.core
 		 */
 		public function invalidate(flag:String = INVALIDATION_FLAG_ALL):void
 		{
-			const isAlreadyInvalid:Boolean = this.isInvalid();
+			var isAlreadyInvalid:Boolean = this.isInvalid();
 			var isAlreadyDelayedInvalid:Boolean = false;
 			if(this._isValidating)
 			{
@@ -1589,13 +1646,13 @@ package feathers.core
 		public function setSize(width:Number, height:Number):void
 		{
 			this.explicitWidth = width;
-			var widthIsNaN:Boolean = isNaN(width);
+			var widthIsNaN:Boolean = width != width;
 			if(widthIsNaN)
 			{
 				this.actualWidth = 0;
 			}
 			this.explicitHeight = height;
-			var heightIsNaN:Boolean = isNaN(height);
+			var heightIsNaN:Boolean = height != height;
 			if(heightIsNaN)
 			{
 				this.actualHeight = 0;
@@ -1647,7 +1704,7 @@ package feathers.core
 		 */
 		protected function setSizeInternal(width:Number, height:Number, canInvalidate:Boolean):Boolean
 		{
-			if(!isNaN(this.explicitWidth))
+			if(this.explicitWidth == this.explicitWidth) //!isNaN
 			{
 				width = this.explicitWidth;
 			}
@@ -1662,7 +1719,7 @@ package feathers.core
 					width = this._maxWidth;
 				}
 			}
-			if(!isNaN(this.explicitHeight))
+			if(this.explicitHeight == this.explicitHeight) //!isNaN
 			{
 				height = this.explicitHeight;
 			}
@@ -1677,11 +1734,11 @@ package feathers.core
 					height = this._maxHeight;
 				}
 			}
-			if(isNaN(width))
+			if(width != width) //isNaN
 			{
 				throw new ArgumentError(ILLEGAL_WIDTH_ERROR);
 			}
-			if(isNaN(height))
+			if(height != height) //isNaN
 			{
 				throw new ArgumentError(ILLEGAL_HEIGHT_ERROR);
 			}
@@ -1689,39 +1746,13 @@ package feathers.core
 			if(this.actualWidth != width)
 			{
 				this.actualWidth = width;
-				if(width < this._minTouchWidth)
-				{
-					this._hitArea.width = this._minTouchWidth;
-				}
-				else
-				{
-					this._hitArea.width = width;
-				}
-				var hitAreaX:Number = (this.actualWidth - this._hitArea.width) / 2;
-				this._hitArea.x = hitAreaX;
-				if(hitAreaX != hitAreaX) //faster than isNaN
-				{
-					this._hitArea.x = 0;
-				}
+				this.refreshHitAreaX();
 				resized = true;
 			}
 			if(this.actualHeight != height)
 			{
 				this.actualHeight = height;
-				if(height < this._minTouchHeight)
-				{
-					this._hitArea.height = this._minTouchHeight;
-				}
-				else
-				{
-					this._hitArea.height = height;
-				}
-				var hitAreaY:Number = (this.actualHeight - this._hitArea.height) / 2;
-				this._hitArea.y = hitAreaY;
-				if(hitAreaY != hitAreaY) //faster than isNaN
-				{
-					this._hitArea.y = 0;
-				}
+				this.refreshHitAreaY();
 				resized = true;
 			}
 			width = this.scaledActualWidth;
@@ -1828,6 +1859,54 @@ package feathers.core
 		}
 
 		/**
+		 * @private
+		 */
+		protected function refreshHitAreaX():void
+		{
+			if(this.actualWidth < this._minTouchWidth)
+			{
+				this._hitArea.width = this._minTouchWidth;
+			}
+			else
+			{
+				this._hitArea.width = this.actualWidth;
+			}
+			var hitAreaX:Number = (this.actualWidth - this._hitArea.width) / 2;
+			if(hitAreaX != hitAreaX) //isNaN
+			{
+				this._hitArea.x = 0;
+			}
+			else
+			{
+				this._hitArea.x = hitAreaX;
+			}
+		}
+
+		/**
+		 * @private
+		 */
+		protected function refreshHitAreaY():void
+		{
+			if(this.actualHeight < this._minTouchHeight)
+			{
+				this._hitArea.height = this._minTouchHeight;
+			}
+			else
+			{
+				this._hitArea.height = this.actualHeight;
+			}
+			var hitAreaY:Number = (this.actualHeight - this._hitArea.height) / 2;
+			if(hitAreaY != hitAreaY) //isNaN
+			{
+				this._hitArea.y = 0;
+			}
+			else
+			{
+				this._hitArea.y = hitAreaY;
+			}
+		}
+
+		/**
 		 * Default event handler for <code>FeathersEventType.FOCUS_IN</code>
 		 * that may be overridden in subclasses to perform additional actions
 		 * when the component receives focus.
@@ -1879,6 +1958,11 @@ package feathers.core
 				this.invalidate(); //invalidate everything
 				this._isInitialized = true;
 				this.dispatchEventWith(FeathersEventType.INITIALIZE);
+
+				if(this._styleProvider)
+				{
+					this._styleProvider.applyStyles(this);
+				}
 			}
 			if(this.isInvalid())
 			{

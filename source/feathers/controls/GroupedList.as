@@ -16,6 +16,7 @@ package feathers.controls
 	import feathers.events.CollectionEventType;
 	import feathers.layout.ILayout;
 	import feathers.layout.VerticalLayout;
+	import feathers.skins.IStyleProvider;
 
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
@@ -163,6 +164,15 @@ package feathers.controls
 		 * @private
 		 */
 		private static const HELPER_POINT:Point = new Point();
+
+		/**
+		 * The default <code>IStyleProvider</code> for all <code>GroupedList</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
 
 		/**
 		 * An alternate name to use with GroupedList to allow a theme to give it
@@ -367,6 +377,20 @@ package feathers.controls
 		public static const INTERACTION_MODE_TOUCH_AND_SCROLL_BARS:String = "touchAndScrollBars";
 
 		/**
+		 * @copy feathers.controls.Scroller#DECELERATION_RATE_NORMAL
+		 *
+		 * @see feathers.controls.Scroller#decelerationRate
+		 */
+		public static const DECELERATION_RATE_NORMAL:Number = 0.998;
+
+		/**
+		 * @copy feathers.controls.Scroller#DECELERATION_RATE_FAST
+		 *
+		 * @see feathers.controls.Scroller#decelerationRate
+		 */
+		public static const DECELERATION_RATE_FAST:Number = 0.99;
+
+		/**
 		 * Constructor.
 		 */
 		public function GroupedList()
@@ -379,6 +403,14 @@ package feathers.controls
 		 * The guts of the List's functionality. Handles layout and selection.
 		 */
 		protected var dataViewPort:GroupedListDataViewPort;
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return GroupedList.styleProvider;
+		}
 
 		/**
 		 * @private
@@ -955,7 +987,7 @@ package feathers.controls
 			}
 			if(!(value is PropertyProxy))
 			{
-				const newValue:PropertyProxy = new PropertyProxy();
+				var newValue:PropertyProxy = new PropertyProxy();
 				for(var propertyName:String in value)
 				{
 					newValue[propertyName] = value[propertyName];
@@ -1609,7 +1641,7 @@ package feathers.controls
 			}
 			if(!(value is PropertyProxy))
 			{
-				const newValue:PropertyProxy = new PropertyProxy();
+				var newValue:PropertyProxy = new PropertyProxy();
 				for(var propertyName:String in value)
 				{
 					newValue[propertyName] = value[propertyName];
@@ -1822,7 +1854,7 @@ package feathers.controls
 			}
 			if(!(value is PropertyProxy))
 			{
-				const newValue:PropertyProxy = new PropertyProxy();
+				var newValue:PropertyProxy = new PropertyProxy();
 				for(var propertyName:String in value)
 				{
 					newValue[propertyName] = value[propertyName];
@@ -2057,7 +2089,7 @@ package feathers.controls
 		/**
 		 * @private
 		 */
-		override public function scrollToPosition(horizontalScrollPosition:Number, verticalScrollPosition:Number, animationDuration:Number = 0):void
+		override public function scrollToPosition(horizontalScrollPosition:Number, verticalScrollPosition:Number, animationDuration:Number = NaN):void
 		{
 			this.pendingItemIndex = -1;
 			super.scrollToPosition(horizontalScrollPosition, verticalScrollPosition, animationDuration);
@@ -2066,7 +2098,7 @@ package feathers.controls
 		/**
 		 * @private
 		 */
-		override public function scrollToPageIndex(horizontalPageIndex:int, verticalPageIndex:int, animationDuration:Number = 0):void
+		override public function scrollToPageIndex(horizontalPageIndex:int, verticalPageIndex:int, animationDuration:Number = NaN):void
 		{
 			this.pendingGroupIndex = -1;
 			this.pendingItemIndex = -1;
@@ -2176,7 +2208,7 @@ package feathers.controls
 		 */
 		override protected function initialize():void
 		{
-			const hasLayout:Boolean = this._layout != null;
+			var hasLayout:Boolean = this._layout != null;
 
 			super.initialize();
 
@@ -2199,7 +2231,7 @@ package feathers.controls
 					this.verticalScrollPolicy = SCROLL_POLICY_ON;
 				}
 
-				const layout:VerticalLayout = new VerticalLayout();
+				var layout:VerticalLayout = new VerticalLayout();
 				layout.useVirtualLayout = true;
 				layout.paddingTop = layout.paddingRight = layout.paddingBottom =
 					layout.paddingLeft = 0;
@@ -2268,7 +2300,7 @@ package feathers.controls
 		{
 			if(this.pendingGroupIndex >= 0 && this.pendingItemIndex >= 0)
 			{
-				const item:Object = this._dataProvider.getItemAt(this.pendingGroupIndex, this.pendingItemIndex);
+				var item:Object = this._dataProvider.getItemAt(this.pendingGroupIndex, this.pendingItemIndex);
 				if(item is Object)
 				{
 					this.dataViewPort.getScrollPositionForIndex(this.pendingGroupIndex, this.pendingItemIndex, HELPER_POINT);
@@ -2387,7 +2419,7 @@ package feathers.controls
 				{
 					itemIndex = -1;
 					groupIndex++;
-					const groupCount:int = this._dataProvider.getLength();
+					var groupCount:int = this._dataProvider.getLength();
 					while(groupIndex < groupCount && itemIndex < 0)
 					{
 						if(this._dataProvider.getLength(groupIndex) > 0)

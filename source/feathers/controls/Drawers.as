@@ -11,6 +11,7 @@ package feathers.controls
 	import feathers.core.IValidating;
 	import feathers.events.ExclusiveTouch;
 	import feathers.events.FeathersEventType;
+	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 	import feathers.utils.display.getDisplayObjectDepthFromStage;
 	import feathers.utils.math.roundToNearest;
@@ -164,6 +165,15 @@ package feathers.controls
 	public class Drawers extends FeathersControl
 	{
 		/**
+		 * The default <code>IStyleProvider</code> for all <code>Drawers</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
+
+		/**
 		 * The drawer will be docked in portrait orientation, but it must be
 		 * opened and closed explicitly in landscape orientation.
 		 *
@@ -304,6 +314,7 @@ package feathers.controls
 		 */
 		public function Drawers(content:DisplayObject = null)
 		{
+			super();
 			this.content = content;
 			this.addEventListener(Event.ADDED_TO_STAGE, drawers_addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, drawers_removedFromStageHandler);
@@ -322,6 +333,14 @@ package feathers.controls
 		 * @see #contentEventDispatcherFunction
 		 */
 		protected var contentEventDispatcher:EventDispatcher;
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return Drawers.styleProvider;
+		}
 
 		/**
 		 * @private
@@ -2039,8 +2058,8 @@ package feathers.controls
 		 */
 		protected function autoSizeIfNeeded():Boolean
 		{
-			const needsWidth:Boolean = isNaN(this.explicitWidth);
-			const needsHeight:Boolean = isNaN(this.explicitHeight);
+			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				return false;
@@ -2532,7 +2551,11 @@ package feathers.controls
 			}
 			this._leftDrawer.visible = true;
 			var targetPosition:Number = this._isLeftDrawerOpen ? this._leftDrawer.width : 0;
-			var duration:Number = !isNaN(this.pendingToggleDuration) ? this.pendingToggleDuration : this._openOrCloseDuration;
+			var duration:Number = this.pendingToggleDuration;
+			if(duration != duration) //isNaN
+			{
+				duration = this._openOrCloseDuration;
+			}
 			this._openOrCloseTween = new Tween(this._content, duration, this._openOrCloseEase);
 			this._openOrCloseTween.animate("x", targetPosition);
 			this._openOrCloseTween.onUpdate = leftDrawerOpenOrCloseTween_onUpdate;
@@ -2852,8 +2875,8 @@ package feathers.controls
 			touch.getLocation(this, HELPER_POINT);
 			this._currentTouchX = HELPER_POINT.x;
 			this._currentTouchY = HELPER_POINT.y;
-			const now:int = getTimer();
-			const timeOffset:int = now - this._previousTouchTime;
+			var now:int = getTimer();
+			var timeOffset:int = now - this._previousTouchTime;
 			if(timeOffset > 0)
 			{
 				//we're keeping previous velocity updates to improve accuracy

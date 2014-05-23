@@ -14,6 +14,7 @@ package feathers.controls
 	import feathers.layout.LayoutBoundsResult;
 	import feathers.layout.VerticalLayout;
 	import feathers.layout.ViewPortBounds;
+	import feathers.skins.IStyleProvider;
 
 	import starling.display.DisplayObject;
 	import starling.events.Event;
@@ -78,6 +79,15 @@ package feathers.controls
 	 */
 	public class ButtonGroup extends FeathersControl
 	{
+		/**
+		 * The default <code>IStyleProvider</code> for all <code>ButtonGroup</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var styleProvider:IStyleProvider;
+
 		/**
 		 * @private
 		 */
@@ -221,6 +231,7 @@ package feathers.controls
 		 */
 		public function ButtonGroup()
 		{
+			super();
 		}
 
 		/**
@@ -293,6 +304,14 @@ package feathers.controls
 		 * @private
 		 */
 		protected var inactiveButtons:Vector.<Button> = new <Button>[];
+
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return ButtonGroup.styleProvider;
+		}
 
 		/**
 		 * @private
@@ -491,7 +510,7 @@ package feathers.controls
 		 *
 		 * @see #VERTICAL_ALIGN_TOP
 		 * @see #VERTICAL_ALIGN_MIDDLE
-		 * @see #VERTICAL_ALIGN_RIGHT
+		 * @see #VERTICAL_ALIGN_BOTTOM
 		 * @see #VERTICAL_ALIGN_JUSTIFY
 		 */
 		public function get verticalAlign():String
@@ -1233,7 +1252,7 @@ package feathers.controls
 			}
 			if(!(value is PropertyProxy))
 			{
-				const newValue:PropertyProxy = new PropertyProxy();
+				var newValue:PropertyProxy = new PropertyProxy();
 				for(var propertyName:String in value)
 				{
 					newValue[propertyName] = value[propertyName];
@@ -1266,10 +1285,10 @@ package feathers.controls
 		 */
 		override protected function draw():void
 		{
-			const dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
-			const stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
-			const stateInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STATE);
-			const buttonFactoryInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_BUTTON_FACTORY);
+			var dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
+			var stylesInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STYLES);
+			var stateInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_STATE);
+			var buttonFactoryInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_BUTTON_FACTORY);
 			var sizeInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_SIZE);
 
 			if(dataInvalid || stateInvalid || buttonFactoryInvalid)
@@ -1300,7 +1319,7 @@ package feathers.controls
 		 */
 		protected function commitEnabled():void
 		{
-			const buttonCount:int = this.activeButtons.length;
+			var buttonCount:int = this.activeButtons.length;
 			for(var i:int = 0; i < buttonCount; i++)
 			{
 				var button:Button = this.activeButtons[i];
@@ -1313,15 +1332,12 @@ package feathers.controls
 		 */
 		protected function refreshButtonStyles():void
 		{
-			for each(var button:Button in this.activeButtons)
+			for(var propertyName:String in this._buttonProperties)
 			{
-				for(var propertyName:String in this._buttonProperties)
+				var propertyValue:Object = this._buttonProperties[propertyName];
+				for each(var button:Button in this.activeButtons)
 				{
-					var propertyValue:Object = this._buttonProperties[propertyName];
-					if(button.hasOwnProperty(propertyName))
-					{
-						button[propertyName] = propertyValue;
-					}
+					button[propertyName] = propertyValue;
 				}
 			}
 		}
@@ -1470,8 +1486,8 @@ package feathers.controls
 			this.activeLastButton = null;
 
 			var pushIndex:int = 0;
-			const itemCount:int = this._dataProvider ? this._dataProvider.length : 0;
-			const lastItemIndex:int = itemCount - 1;
+			var itemCount:int = this._dataProvider ? this._dataProvider.length : 0;
+			var lastItemIndex:int = itemCount - 1;
 			for(var i:int = 0; i < itemCount; i++)
 			{
 				var item:Object = this._dataProvider.getItemAt(i);
@@ -1499,7 +1515,7 @@ package feathers.controls
 		 */
 		protected function clearInactiveButtons():void
 		{
-			const itemCount:int = this.inactiveButtons.length;
+			var itemCount:int = this.inactiveButtons.length;
 			for(var i:int = 0; i < itemCount; i++)
 			{
 				var button:Button = this.inactiveButtons.shift();
