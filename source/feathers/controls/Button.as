@@ -22,6 +22,7 @@ package feathers.controls
 	import flash.utils.getTimer;
 
 	import starling.display.DisplayObject;
+	import starling.display.Stage;
 	import starling.events.Event;
 	import starling.events.KeyboardEvent;
 	import starling.events.Touch;
@@ -2700,6 +2701,7 @@ package feathers.controls
 		 * @private
 		 */
 		protected var _isLongPressEnabled:Boolean = false;
+		private var _keyHandlerStage : Stage;
 
 		/**
 		 * Determines if <code>FeathersEventType.LONG_PRESS</code> will be
@@ -3342,6 +3344,7 @@ package feathers.controls
 			super.focusInHandler(event);
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, stage_keyDownHandler);
 			this.stage.addEventListener(KeyboardEvent.KEY_UP, stage_keyUpHandler);
+			_keyHandlerStage = this.stage;
 		}
 
 		/**
@@ -3350,8 +3353,9 @@ package feathers.controls
 		override protected function focusOutHandler(event:Event):void
 		{
 			super.focusOutHandler(event);
-			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN, stage_keyDownHandler);
-			this.stage.removeEventListener(KeyboardEvent.KEY_UP, stage_keyUpHandler);
+			_keyHandlerStage.removeEventListener(KeyboardEvent.KEY_DOWN, stage_keyDownHandler);
+			_keyHandlerStage.removeEventListener(KeyboardEvent.KEY_UP, stage_keyUpHandler);
+			_keyHandlerStage = null;
 		}
 
 		/**
