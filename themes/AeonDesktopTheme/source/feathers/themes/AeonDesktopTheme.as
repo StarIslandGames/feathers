@@ -41,12 +41,21 @@ package feathers.themes
 	 */
 	public class AeonDesktopTheme extends BaseAeonDesktopTheme
 	{
-		[Embed(source="/../assets/images/aeon.png")]
+		/**
+		 * @private
+		 */
+		[Embed(source="/../assets/images/aeon_desktop.png")]
 		protected static const ATLAS_BITMAP:Class;
 
-		[Embed(source="/../assets/images/aeon.xml",mimeType="application/octet-stream")]
+		/**
+		 * @private
+		 */
+		[Embed(source="/../assets/images/aeon_desktop.xml",mimeType="application/octet-stream")]
 		protected static const ATLAS_XML:Class;
 
+		/**
+		 * Constructor.
+		 */
 		public function AeonDesktopTheme()
 		{
 			super();
@@ -54,21 +63,27 @@ package feathers.themes
 			this.dispatchEventWith(Event.COMPLETE);
 		}
 
+		/**
+		 * @private
+		 */
 		override protected function initialize():void
 		{
 			var atlasBitmapData:BitmapData = Bitmap(new ATLAS_BITMAP()).bitmapData;
-			this.atlasTexture = Texture.fromBitmapData(atlasBitmapData, false);
-			this.atlasTexture.root.onRestore = this.atlasTexture_onRestore;
+			var atlasTexture:Texture = Texture.fromBitmapData(atlasBitmapData, false, false, 1);
+			atlasTexture.root.onRestore = this.atlasTexture_onRestore;
 			atlasBitmapData.dispose();
 			this.atlas = new TextureAtlas(atlasTexture, XML(new ATLAS_XML()));
 
 			super.initialize();
 		}
 
+		/**
+		 * @private
+		 */
 		protected function atlasTexture_onRestore():void
 		{
 			var atlasBitmapData:BitmapData = Bitmap(new ATLAS_BITMAP()).bitmapData;
-			this.atlasTexture.root.uploadBitmapData(atlasBitmapData);
+			this.atlas.texture.root.uploadBitmapData(atlasBitmapData);
 			atlasBitmapData.dispose();
 		}
 	}

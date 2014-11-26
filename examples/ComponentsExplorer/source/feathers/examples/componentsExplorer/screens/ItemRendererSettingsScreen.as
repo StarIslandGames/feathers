@@ -8,7 +8,6 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.renderers.BaseDefaultItemRenderer;
 	import feathers.data.HierarchicalCollection;
 	import feathers.data.ListCollection;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.componentsExplorer.data.ItemRendererSettings;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
@@ -43,6 +42,19 @@ package feathers.examples.componentsExplorer.screens
 		private var _accessoryGapPicker:PickerList;
 		private var _horizontalAlignPicker:PickerList;
 		private var _verticalAlignPicker:PickerList;
+
+		override public function dispose():void
+		{
+			//icon and accessory display objects in the list's data provider
+			//won't be automatically disposed because feathers cannot know if
+			//they need to be used again elsewhere or not. we need to dispose
+			//them manually.
+			this._list.dataProvider.dispose(null, disposeItemAccessory);
+
+			//never forget to call super.dispose() because you don't want to
+			//create a memory leak!
+			super.dispose();
+		}
 
 		override protected function initialize():void
 		{
@@ -222,6 +234,11 @@ package feathers.examples.componentsExplorer.screens
 			];
 
 			this.backButtonHandler = this.onBackButton;
+		}
+
+		private function disposeItemAccessory(item:Object):void
+		{
+			DisplayObject(item.accessory).dispose();
 		}
 
 		private function onBackButton():void

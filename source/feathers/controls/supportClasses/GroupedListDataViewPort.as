@@ -70,7 +70,7 @@ package feathers.controls.supportClasses
 			{
 				return;
 			}
-			if(value != value) //isNaN
+			if(value !== value) //isNaN
 			{
 				throw new ArgumentError("minVisibleWidth cannot be NaN");
 			}
@@ -91,7 +91,7 @@ package feathers.controls.supportClasses
 			{
 				return;
 			}
-			if(value != value) //isNaN
+			if(value !== value) //isNaN
 			{
 				throw new ArgumentError("maxVisibleWidth cannot be NaN");
 			}
@@ -111,7 +111,7 @@ package feathers.controls.supportClasses
 		public function set visibleWidth(value:Number):void
 		{
 			if(this.explicitVisibleWidth == value ||
-				(value != value && this.explicitVisibleWidth != this.explicitVisibleWidth)) //isNaN
+				(value !== value && this.explicitVisibleWidth !== this.explicitVisibleWidth)) //isNaN
 			{
 				return;
 			}
@@ -132,7 +132,7 @@ package feathers.controls.supportClasses
 			{
 				return;
 			}
-			if(value != value) //isNaN
+			if(value !== value) //isNaN
 			{
 				throw new ArgumentError("minVisibleHeight cannot be NaN");
 			}
@@ -153,7 +153,7 @@ package feathers.controls.supportClasses
 			{
 				return;
 			}
-			if(value != value) //isNaN
+			if(value !== value) //isNaN
 			{
 				throw new ArgumentError("maxVisibleHeight cannot be NaN");
 			}
@@ -173,7 +173,7 @@ package feathers.controls.supportClasses
 		public function set visibleHeight(value:Number):void
 		{
 			if(this.explicitVisibleHeight == value ||
-				(value != value && this.explicitVisibleHeight != this.explicitVisibleHeight)) //isNaN
+				(value !== value && this.explicitVisibleHeight !== this.explicitVisibleHeight)) //isNaN
 			{
 				return;
 			}
@@ -317,6 +317,8 @@ package feathers.controls.supportClasses
 			}
 		}
 
+		private var _updateForDataReset:Boolean = false;
+
 		private var _dataProvider:HierarchicalCollection;
 
 		public function get dataProvider():HierarchicalCollection
@@ -353,6 +355,7 @@ package feathers.controls.supportClasses
 			{
 				IVariableVirtualLayout(this._layout).resetVariableVirtualCache();
 			}
+			this._updateForDataReset = true;
 			this.invalidate(INVALIDATION_FLAG_DATA);
 		}
 
@@ -936,8 +939,6 @@ package feathers.controls.supportClasses
 			this._ignoreRendererResizing = true;
 			var oldIgnoreLayoutChanges:Boolean = this._ignoreLayoutChanges;
 			this._ignoreLayoutChanges = true;
-			var oldIgnoreSelectionChanges:Boolean = this._ignoreSelectionChanges;
-			this._ignoreSelectionChanges = true;
 
 			if(scrollInvalid || sizeInvalid)
 			{
@@ -963,14 +964,20 @@ package feathers.controls.supportClasses
 			}
 			if(selectionInvalid || basicsInvalid)
 			{
+				//unlike resizing renderers and layout changes, we only want to
+				//stop listening for selection changes when we're forcibly
+				//updating selection. other property changes on item renderers
+				//can validly change selection, and we need to detect that.
+				var oldIgnoreSelectionChanges:Boolean = this._ignoreSelectionChanges;
+				this._ignoreSelectionChanges = true;
 				this.refreshSelection();
+				this._ignoreSelectionChanges = oldIgnoreSelectionChanges;
 			}
 			if(stateInvalid || basicsInvalid)
 			{
 				this.refreshEnabled();
 			}
 			this._ignoreLayoutChanges = oldIgnoreLayoutChanges;
-			this._ignoreSelectionChanges = oldIgnoreSelectionChanges;
 
 			this._layout.layout(this._layoutItems, this._viewPortBounds, this._layoutResult);
 
@@ -1034,7 +1041,7 @@ package feathers.controls.supportClasses
 				var renderer:DisplayObject = DisplayObject(this._activeItemRenderers[i]);
 				if(renderer is IFeathersControl)
 				{
-					FeathersControl(renderer).isEnabled = this._isEnabled;
+					IFeathersControl(renderer).isEnabled = this._isEnabled;
 				}
 			}
 			if(this._activeFirstItemRenderers)
@@ -1045,7 +1052,7 @@ package feathers.controls.supportClasses
 					renderer = DisplayObject(this._activeFirstItemRenderers[i]);
 					if(renderer is IFeathersControl)
 					{
-						FeathersControl(renderer).isEnabled = this._isEnabled;
+						IFeathersControl(renderer).isEnabled = this._isEnabled;
 					}
 				}
 			}
@@ -1057,7 +1064,7 @@ package feathers.controls.supportClasses
 					renderer = DisplayObject(this._activeLastItemRenderers[i]);
 					if(renderer is IFeathersControl)
 					{
-						FeathersControl(renderer).isEnabled = this._isEnabled;
+						IFeathersControl(renderer).isEnabled = this._isEnabled;
 					}
 				}
 			}
@@ -1069,7 +1076,7 @@ package feathers.controls.supportClasses
 					renderer = DisplayObject(this._activeSingleItemRenderers[i]);
 					if(renderer is IFeathersControl)
 					{
-						FeathersControl(renderer).isEnabled = this._isEnabled;
+						IFeathersControl(renderer).isEnabled = this._isEnabled;
 					}
 				}
 			}
@@ -1079,7 +1086,7 @@ package feathers.controls.supportClasses
 				renderer = DisplayObject(this._activeHeaderRenderers[i]);
 				if(renderer is IFeathersControl)
 				{
-					FeathersControl(renderer).isEnabled = this._isEnabled;
+					IFeathersControl(renderer).isEnabled = this._isEnabled;
 				}
 			}
 			rendererCount = this._activeFooterRenderers.length;
@@ -1088,7 +1095,7 @@ package feathers.controls.supportClasses
 				renderer = DisplayObject(this._activeFooterRenderers[i]);
 				if(renderer is IFeathersControl)
 				{
-					FeathersControl(renderer).isEnabled = this._isEnabled;
+					IFeathersControl(renderer).isEnabled = this._isEnabled;
 				}
 			}
 		}
@@ -1580,6 +1587,7 @@ package feathers.controls.supportClasses
 			this.recoverInactiveRenderers();
 			this.renderUnrenderedData();
 			this.freeInactiveRenderers();
+			this._updateForDataReset = false;
 		}
 
 		private function findUnrenderedData():void
@@ -1679,6 +1687,12 @@ package feathers.controls.supportClasses
 						{
 							headerOrFooterRenderer.layoutIndex = currentIndex;
 							headerOrFooterRenderer.groupIndex = i;
+							if(this._updateForDataReset)
+							{
+								//see comments in findRendererForItem()
+								headerOrFooterRenderer.data = null;
+								headerOrFooterRenderer.data = header;
+							}
 							this._activeHeaderRenderers.push(headerOrFooterRenderer);
 							this._inactiveHeaderRenderers.splice(this._inactiveHeaderRenderers.indexOf(headerOrFooterRenderer), 1);
 							headerOrFooterRenderer.visible = true;
@@ -1742,6 +1756,12 @@ package feathers.controls.supportClasses
 						{
 							headerOrFooterRenderer.groupIndex = i;
 							headerOrFooterRenderer.layoutIndex = currentIndex;
+							if(this._updateForDataReset)
+							{
+								//see comments in findRendererForItem()
+								headerOrFooterRenderer.data = null;
+								headerOrFooterRenderer.data = footer;
+							}
 							this._activeFooterRenderers.push(headerOrFooterRenderer);
 							this._inactiveFooterRenderers.splice(this._inactiveFooterRenderers.indexOf(headerOrFooterRenderer), 1);
 							headerOrFooterRenderer.visible = true;
@@ -1798,6 +1818,20 @@ package feathers.controls.supportClasses
 				itemRenderer.groupIndex = groupIndex;
 				itemRenderer.itemIndex = itemIndex;
 				itemRenderer.layoutIndex = layoutIndex;
+				if(this._updateForDataReset)
+				{
+					//similar to calling updateItemAt(), replacing the data
+					//provider or resetting its source means that we should
+					//trick the item renderer into thinking it has new data.
+					//many developers seem to expect this behavior, so while
+					//it's not the most optimal for performance, it saves on
+					//support time in the forums. thankfully, it's still
+					//somewhat optimized since the same item renderer will
+					//receive the same data, and the children generally
+					//won't have changed much, if at all.
+					itemRenderer.data = null;
+					itemRenderer.data = item;
+				}
 
 				//the typical item renderer is a special case, and we will
 				//have already put it into the active renderers, so we don't
@@ -2535,6 +2569,8 @@ package feathers.controls.supportClasses
 
 		private function dataProvider_resetHandler(event:Event):void
 		{
+			this._updateForDataReset = true;
+
 			var layout:IVariableVirtualLayout = this._layout as IVariableVirtualLayout;
 			if(!layout || !layout.hasVariableItemDimensions)
 			{

@@ -5,7 +5,6 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.PanelScreen;
 	import feathers.controls.ToggleSwitch;
 	import feathers.data.ListCollection;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.componentsExplorer.data.EmbeddedAssets;
 	import feathers.examples.componentsExplorer.data.ItemRendererSettings;
 	import feathers.layout.AnchorLayout;
@@ -24,7 +23,7 @@ package feathers.examples.componentsExplorer.screens
 	{
 		public static const SHOW_SETTINGS:String = "showSettings";
 
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		public function ItemRendererScreen()
 		{
@@ -72,7 +71,20 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return ItemRendererScreen.styleProvider;
+			return ItemRendererScreen.globalStyleProvider;
+		}
+
+		override public function dispose():void
+		{
+			//icon and accessory display objects in the list's data provider
+			//won't be automatically disposed because feathers cannot know if
+			//they need to be used again elsewhere or not. we need to dispose
+			//them manually.
+			this._list.dataProvider.dispose(disposeItemIconOrAccessory);
+
+			//never forget to call super.dispose() because you don't want to
+			//create a memory leak!
+			super.dispose();
 		}
 
 		override protected function initialize():void
@@ -218,6 +230,18 @@ package feathers.examples.componentsExplorer.screens
 
 			//never forget to call super.draw()!
 			super.draw();
+		}
+
+		private function disposeItemIconOrAccessory(item:Object):void
+		{
+			if(item.hasOwnProperty("icon"))
+			{
+				DisplayObject(item.icon).dispose();
+			}
+			if(item.hasOwnProperty("accessory"))
+			{
+				DisplayObject(item.accessory).dispose();
+			}
 		}
 
 		private function onBackButton():void

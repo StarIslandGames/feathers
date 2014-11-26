@@ -155,7 +155,7 @@ package feathers.controls
 		 * @default null
 		 * @see feathers.core.FeathersControl#styleProvider
 		 */
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		/**
 		 * The default transition function.
@@ -192,7 +192,7 @@ package feathers.controls
 		 */
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return ScreenNavigator.styleProvider;
+			return ScreenNavigator.globalStyleProvider;
 		}
 
 		/**
@@ -455,7 +455,7 @@ package feathers.controls
 
 			this._screenEvents[id] = savedScreenEvents;
 
-			if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT)
+			if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT || !this.stage)
 			{
 				this._activeScreen.addEventListener(FeathersEventType.RESIZE, activeScreen_resizeHandler);
 			}
@@ -704,14 +704,14 @@ package feathers.controls
 		 */
 		protected function autoSizeIfNeeded():Boolean
 		{
-			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
-			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
+			var needsWidth:Boolean = this.explicitWidth !== this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight !== this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				return false;
 			}
 
-			if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT &&
+			if((this._autoSizeMode == AUTO_SIZE_MODE_CONTENT || !this.stage) &&
 				this._activeScreen is IValidating)
 			{
 				IValidating(this._activeScreen).validate();
@@ -720,7 +720,7 @@ package feathers.controls
 			var newWidth:Number = this.explicitWidth;
 			if(needsWidth)
 			{
-				if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT)
+				if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT || !this.stage)
 				{
 					newWidth = this._activeScreen ? this._activeScreen.width : 0;
 				}
@@ -733,7 +733,7 @@ package feathers.controls
 			var newHeight:Number = this.explicitHeight;
 			if(needsHeight)
 			{
-				if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT)
+				if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT || !this.stage)
 				{
 					newHeight = this._activeScreen ? this._activeScreen.height : 0;
 				}
@@ -763,10 +763,7 @@ package feathers.controls
 					screen.screenID = null;
 					screen.owner = null;
 				}
-				if(this._autoSizeMode == AUTO_SIZE_MODE_CONTENT)
-				{
-					this._previousScreenInTransition.removeEventListener(FeathersEventType.RESIZE, activeScreen_resizeHandler);
-				}
+				this._previousScreenInTransition.removeEventListener(FeathersEventType.RESIZE, activeScreen_resizeHandler);
 				this.removeChild(this._previousScreenInTransition, canBeDisposed);
 				this._previousScreenInTransition = null;
 				this._previousScreenInTransitionID = null;

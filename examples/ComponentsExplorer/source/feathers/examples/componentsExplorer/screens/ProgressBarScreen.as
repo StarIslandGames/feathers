@@ -3,8 +3,6 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.Button;
 	import feathers.controls.PanelScreen;
 	import feathers.controls.ProgressBar;
-	import feathers.events.FeathersEventType;
-	import feathers.layout.HorizontalLayout;
 	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
@@ -17,7 +15,7 @@ package feathers.examples.componentsExplorer.screens
 
 	public class ProgressBarScreen extends PanelScreen
 	{
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		public function ProgressBarScreen()
 		{
@@ -33,7 +31,7 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return ProgressBarScreen.styleProvider;
+			return ProgressBarScreen.globalStyleProvider;
 		}
 
 		override protected function initialize():void

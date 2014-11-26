@@ -1,13 +1,9 @@
 package feathers.examples.componentsExplorer.screens
 {
 	import feathers.controls.Button;
-	import feathers.controls.Label;
 	import feathers.controls.PanelScreen;
 	import feathers.controls.Slider;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.componentsExplorer.data.SliderSettings;
-	import feathers.layout.AnchorLayout;
-	import feathers.layout.AnchorLayoutData;
 	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
@@ -22,7 +18,7 @@ package feathers.examples.componentsExplorer.screens
 	{
 		public static const SHOW_SETTINGS:String = "showSettings";
 
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		public function SliderScreen()
 		{
@@ -38,7 +34,7 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return SliderScreen.styleProvider;
+			return SliderScreen.globalStyleProvider;
 		}
 		
 		override protected function initialize():void

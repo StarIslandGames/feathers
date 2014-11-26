@@ -7,7 +7,6 @@ accordance with the terms of the accompanying license agreement.
 */
 package feathers.core
 {
-	import feathers.core.FocusManager;
 	import feathers.events.FeathersEventType;
 
 	import flash.utils.Dictionary;
@@ -170,7 +169,7 @@ package feathers.core
 				this._root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
 			}
 
-			if(isModal && FocusManager.isEnabled && popUp is DisplayObjectContainer)
+			if(isModal && FocusManager.isEnabledForStage(this._root.stage) && popUp is DisplayObjectContainer)
 			{
 				this._popUpToFocusManager[popUp] = FocusManager.pushFocusManager(DisplayObjectContainer(popUp));
 			}
@@ -224,7 +223,7 @@ package feathers.core
 					//we haven't encountered an overlay yet, so it is top-level
 					return true;
 				}
-				var overlay:DisplayObject = this._popUpToOverlay[otherPopUp];
+				var overlay:DisplayObject = this._popUpToOverlay[otherPopUp] as DisplayObject;
 				if(overlay)
 				{
 					//this is the first overlay, and we haven't found the pop-up
@@ -283,7 +282,7 @@ package feathers.core
 				overlay.removeFromParent(true);
 				delete _popUpToOverlay[popUp];
 			}
-			var focusManager:IFocusManager = this._popUpToFocusManager[popUp];
+			var focusManager:IFocusManager = this._popUpToFocusManager[popUp] as IFocusManager;
 			if(focusManager)
 			{
 				delete this._popUpToFocusManager[popUp];

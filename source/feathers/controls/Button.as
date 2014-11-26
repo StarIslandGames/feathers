@@ -30,9 +30,10 @@ package feathers.controls
 	import starling.events.TouchPhase;
 
 	/**
-	 * Dispatched when the button is released while the touch is still
-	 * within the button's bounds (a tap or click that should trigger the
-	 * button).
+	 * Dispatched when the the user taps or clicks the button. The touch must
+	 * remain within the bounds of the button on release to register as a tap
+	 * or a click. If focus management is enabled, the button may also be
+	 * triggered by pressing the spacebar while the button has focus.
 	 *
 	 * <p>The properties of the event object have the following values:</p>
 	 * <table class="innertable">
@@ -110,9 +111,9 @@ package feathers.controls
 		private static const HELPER_POINT:Point = new Point();
 
 		/**
-		 * The default value added to the <code>nameList</code> of the label.
+		 * The default value added to the <code>styleNameList</code> of the label.
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const DEFAULT_CHILD_NAME_LABEL:String = "feathers-button-label";
 
@@ -123,7 +124,7 @@ package feathers.controls
 		 * fall back to using the default button skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
-		 * <code>nameList</code> before the component is added to the stage for
+		 * <code>styleNameList</code> before the component is added to the stage for
 		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the call-to-action style is applied to
@@ -134,7 +135,7 @@ package feathers.controls
 		 * button.styleNameList.add( Button.ALTERNATE_NAME_CALL_TO_ACTION_BUTTON );
 		 * this.addChild( button );</listing>
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const ALTERNATE_NAME_CALL_TO_ACTION_BUTTON:String = "feathers-call-to-action-button";
 
@@ -145,7 +146,7 @@ package feathers.controls
 		 * to using the default button skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
-		 * <code>nameList</code> before the component is added to the stage for
+		 * <code>styleNameList</code> before the component is added to the stage for
 		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the quiet button style is applied to
@@ -156,7 +157,7 @@ package feathers.controls
 		 * button.styleNameList.add( Button.ALTERNATE_NAME_QUIET_BUTTON );
 		 * this.addChild( button );</listing>
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const ALTERNATE_NAME_QUIET_BUTTON:String = "feathers-quiet-button";
 
@@ -169,7 +170,7 @@ package feathers.controls
 		 * to using the default button skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
-		 * <code>nameList</code> before the component is added to the stage for
+		 * <code>styleNameList</code> before the component is added to the stage for
 		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the danger button style is applied to
@@ -180,7 +181,7 @@ package feathers.controls
 		 * button.styleNameList.add( Button.ALTERNATE_NAME_DANGER_BUTTON );
 		 * this.addChild( button );</listing>
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const ALTERNATE_NAME_DANGER_BUTTON:String = "feathers-danger-button";
 
@@ -191,7 +192,7 @@ package feathers.controls
 		 * automatically fall back to using the default button skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
-		 * <code>nameList</code> before the component is added to the stage for
+		 * <code>styleNameList</code> before the component is added to the stage for
 		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the back button style is applied to
@@ -202,7 +203,7 @@ package feathers.controls
 		 * button.styleNameList.add( Button.ALTERNATE_NAME_BACK_BUTTON );
 		 * this.addChild( button );</listing>
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const ALTERNATE_NAME_BACK_BUTTON:String = "feathers-back-button";
 
@@ -213,7 +214,7 @@ package feathers.controls
 		 * will automatically fall back to using the default button skin.
 		 *
 		 * <p>An alternate name should always be added to a component's
-		 * <code>nameList</code> before the component is added to the stage for
+		 * <code>styleNameList</code> before the component is added to the stage for
 		 * the first time. If it is added later, it will be ignored.</p>
 		 *
 		 * <p>In the following example, the forward button style is applied to
@@ -224,7 +225,7 @@ package feathers.controls
 		 * button.styleNameList.add( Button.ALTERNATE_NAME_FORWARD_BUTTON );
 		 * this.addChild( button );</listing>
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		public static const ALTERNATE_NAME_FORWARD_BUTTON:String = "feathers-forward-button";
 		
@@ -368,7 +369,7 @@ package feathers.controls
 		 * @default null
 		 * @see feathers.core.FeathersControl#styleProvider
 		 */
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 		
 		/**
 		 * Constructor.
@@ -382,12 +383,12 @@ package feathers.controls
 		}
 
 		/**
-		 * The value added to the <code>nameList</code> of the label. This
+		 * The value added to the <code>styleNameList</code> of the label. This
 		 * variable is <code>protected</code> so that sub-classes can customize
 		 * the label name in their constructors instead of using the default
 		 * name defined by <code>DEFAULT_CHILD_NAME_LABEL</code>.
 		 *
-		 * @see feathers.core.IFeathersControl#nameList
+		 * @see feathers.core.FeathersControl#styleNameList
 		 */
 		protected var labelName:String = DEFAULT_CHILD_NAME_LABEL;
 		
@@ -431,7 +432,7 @@ package feathers.controls
 		 */
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return Button.styleProvider;
+			return Button.globalStyleProvider;
 		}
 		
 		/**
@@ -525,6 +526,41 @@ package feathers.controls
 			}
 			this._label = value;
 			this.invalidate(INVALIDATION_FLAG_DATA);
+		}
+
+		/**
+		 * @private
+		 */
+		protected var _hasLabelTextRenderer:Boolean = true;
+
+		/**
+		 * Determines if the button's label text renderer is created or not.
+		 * Useful for button sub-components that may not display text, like
+		 * slider thumbs and tracks, or similar sub-components on scroll bars.
+		 *
+		 * <p>The following example removed the label text renderer:</p>
+		 *
+		 * <listing version="3.0">
+		 * button.hasLabelTextRenderer = false;</listing>
+		 *
+		 * @default true
+		 */
+		public function get hasLabelTextRenderer():Boolean
+		{
+			return this._hasLabelTextRenderer;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set hasLabelTextRenderer(value:Boolean):void
+		{
+			if(this._hasLabelTextRenderer == value)
+			{
+				return;
+			}
+			this._hasLabelTextRenderer = value;
+			this.invalidate(INVALIDATION_FLAG_TEXT_RENDERER);
 		}
 		
 		/**
@@ -918,6 +954,9 @@ package feathers.controls
 
 		/**
 		 * Offsets the x position of the label by a certain number of pixels.
+		 * This does not affect the measurement of the button. The button will
+		 * measure itself as if the label were not offset from its original
+		 * position.
 		 *
 		 * <p>The following example offsets the x position of the button's label
 		 * by 20 pixels:</p>
@@ -954,6 +993,9 @@ package feathers.controls
 
 		/**
 		 * Offsets the y position of the label by a certain number of pixels.
+		 * This does not affect the measurement of the button. The button will
+		 * measure itself as if the label were not offset from its original
+		 * position.
 		 *
 		 * <p>The following example offsets the y position of the button's label
 		 * by 20 pixels:</p>
@@ -990,6 +1032,9 @@ package feathers.controls
 
 		/**
 		 * Offsets the x position of the icon by a certain number of pixels.
+		 * This does not affect the measurement of the button. The button will
+		 * measure itself as if the icon were not offset from its original
+		 * position.
 		 *
 		 * <p>The following example offsets the x position of the button's icon
 		 * by 20 pixels:</p>
@@ -1026,6 +1071,9 @@ package feathers.controls
 
 		/**
 		 * Offsets the y position of the icon by a certain number of pixels.
+		 * This does not affect the measurement of the button. The button will
+		 * measure itself as if the icon were not offset from its original
+		 * position.
 		 *
 		 * <p>The following example offsets the y position of the button's icon
 		 * by 20 pixels:</p>
@@ -2017,14 +2065,21 @@ package feathers.controls
 		 */
 		protected function autoSizeIfNeeded():Boolean
 		{
-			var needsWidth:Boolean = this.explicitWidth != this.explicitWidth; //isNaN
-			var needsHeight:Boolean = this.explicitHeight != this.explicitHeight; //isNaN
+			var needsWidth:Boolean = this.explicitWidth !== this.explicitWidth; //isNaN
+			var needsHeight:Boolean = this.explicitHeight !== this.explicitHeight; //isNaN
 			if(!needsWidth && !needsHeight)
 			{
 				return false;
 			}
 			this.refreshMaxLabelWidth(true);
-			this.labelTextRenderer.measureText(HELPER_POINT);
+			if(this.labelTextRenderer)
+			{
+				this.labelTextRenderer.measureText(HELPER_POINT);
+			}
+			else
+			{
+				HELPER_POINT.setTo(0, 0);
+			}
 			var newWidth:Number = this.explicitWidth;
 			if(needsWidth)
 			{
@@ -2054,7 +2109,7 @@ package feathers.controls
 					newWidth = HELPER_POINT.x;
 				}
 				newWidth += this._paddingLeft + this._paddingRight;
-				if(newWidth != newWidth) //isNaN
+				if(newWidth !== newWidth) //isNaN
 				{
 					newWidth = this._originalSkinWidth;
 					if(newWidth != newWidth)
@@ -2062,7 +2117,7 @@ package feathers.controls
 						newWidth = 0;
 					}
 				}
-				else if(this._originalSkinWidth == this._originalSkinWidth) //!isNaN
+				else if(this._originalSkinWidth === this._originalSkinWidth) //!isNaN
 				{
 					if(this._originalSkinWidth > newWidth)
 					{
@@ -2107,7 +2162,7 @@ package feathers.controls
 						newHeight = 0;
 					}
 				}
-				else if(this._originalSkinHeight == this._originalSkinHeight) //!isNaN
+				else if(this._originalSkinHeight === this._originalSkinHeight) //!isNaN
 				{
 					if(this._originalSkinHeight > newHeight)
 					{
@@ -2137,10 +2192,13 @@ package feathers.controls
 				this.labelTextRenderer = null;
 			}
 
-			var factory:Function = this._labelFactory != null ? this._labelFactory : FeathersControl.defaultTextRendererFactory;
-			this.labelTextRenderer = ITextRenderer(factory());
-			this.labelTextRenderer.styleNameList.add(this.labelName);
-			this.addChild(DisplayObject(this.labelTextRenderer));
+			if(this._hasLabelTextRenderer)
+			{
+				var factory:Function = this._labelFactory != null ? this._labelFactory : FeathersControl.defaultTextRendererFactory;
+				this.labelTextRenderer = ITextRenderer(factory());
+				this.labelTextRenderer.styleNameList.add(this.labelName);
+				this.addChild(DisplayObject(this.labelTextRenderer));
+			}
 		}
 
 		/**
@@ -2148,6 +2206,10 @@ package feathers.controls
 		 */
 		protected function refreshLabel():void
 		{
+			if(!this.labelTextRenderer)
+			{
+				return;
+			}
 			this.labelTextRenderer.text = this._label;
 			this.labelTextRenderer.visible = this._label !== null && this._label.length > 0;
 			this.labelTextRenderer.isEnabled = this._isEnabled;
@@ -2181,8 +2243,8 @@ package feathers.controls
 				}
 			}
 			if(this.currentSkin &&
-				(this._originalSkinWidth != this._originalSkinWidth || //isNaN
-				this._originalSkinHeight != this._originalSkinHeight))
+				(this._originalSkinWidth !== this._originalSkinWidth || //isNaN
+				this._originalSkinHeight !== this._originalSkinHeight))
 			{
 				if(this.currentSkin is IValidating)
 				{
@@ -2222,7 +2284,11 @@ package feathers.controls
 				if(this.currentIcon)
 				{
 					//we want the icon to appear below the label text renderer
-					var index:int = this.getChildIndex(DisplayObject(this.labelTextRenderer));
+					var index:int = this.numChildren;
+					if(this.labelTextRenderer)
+					{
+						index = this.getChildIndex(DisplayObject(this.labelTextRenderer));
+					}
 					this.addChildAt(this.currentIcon, index);
 				}
 			}
@@ -2233,6 +2299,10 @@ package feathers.controls
 		 */
 		protected function refreshLabelStyles():void
 		{
+			if(!this.labelTextRenderer)
+			{
+				return;
+			}
 			if(this._stateToLabelPropertiesFunction != null)
 			{
 				var properties:Object = this._stateToLabelPropertiesFunction(this, this._currentState);
@@ -2267,6 +2337,10 @@ package feathers.controls
 			{
 				this.currentSkin.height = this.actualHeight;
 			}
+			if(this.currentSkin is IValidating)
+			{
+				IValidating(this.currentSkin).validate();
+			}
 		}
 		
 		/**
@@ -2277,7 +2351,7 @@ package feathers.controls
 		protected function layoutContent():void
 		{
 			this.refreshMaxLabelWidth(false);
-			if(this._label && this.currentIcon)
+			if(this._label && this.labelTextRenderer && this.currentIcon)
 			{
 				this.labelTextRenderer.validate();
 				this.positionSingleChild(DisplayObject(this.labelTextRenderer));
@@ -2287,12 +2361,12 @@ package feathers.controls
 				}
 
 			}
-			else if(this._label && !this.currentIcon)
+			else if(this._label && this.labelTextRenderer && !this.currentIcon)
 			{
 				this.labelTextRenderer.validate();
 				this.positionSingleChild(DisplayObject(this.labelTextRenderer));
 			}
-			else if(!this._label && this.currentIcon && this._iconPosition != ICON_POSITION_MANUAL)
+			else if((!this._label || !this.labelTextRenderer) && this.currentIcon && this._iconPosition != ICON_POSITION_MANUAL)
 			{
 				this.positionSingleChild(this.currentIcon);
 			}
@@ -2307,7 +2381,7 @@ package feathers.controls
 				this.currentIcon.x += this._iconOffsetX;
 				this.currentIcon.y += this._iconOffsetY;
 			}
-			if(this._label)
+			if(this._label && this.labelTextRenderer)
 			{
 				this.labelTextRenderer.x += this._labelOffsetX;
 				this.labelTextRenderer.y += this._labelOffsetY;
@@ -2327,12 +2401,12 @@ package feathers.controls
 			if(forMeasurement)
 			{
 				calculatedWidth = this.explicitWidth;
-				if(calculatedWidth != calculatedWidth) //isNaN
+				if(calculatedWidth !== calculatedWidth) //isNaN
 				{
 					calculatedWidth = this._maxWidth;
 				}
 			}
-			if(this._label && this.currentIcon)
+			if(this._label && this.labelTextRenderer && this.currentIcon)
 			{
 				if(this._iconPosition == ICON_POSITION_LEFT || this._iconPosition == ICON_POSITION_LEFT_BASELINE ||
 					this._iconPosition == ICON_POSITION_RIGHT || this._iconPosition == ICON_POSITION_RIGHT_BASELINE)
@@ -2350,7 +2424,7 @@ package feathers.controls
 				}
 
 			}
-			else if(this._label && !this.currentIcon)
+			else if(this._label && this.labelTextRenderer && !this.currentIcon)
 			{
 				this.labelTextRenderer.maxWidth = calculatedWidth - this._paddingLeft - this._paddingRight;
 			}
@@ -2371,7 +2445,7 @@ package feathers.controls
 			}
 			else //center
 			{
-				displayObject.x = this._paddingLeft + (this.actualWidth - this._paddingLeft - this._paddingRight - displayObject.width) / 2;
+				displayObject.x = this._paddingLeft + Math.round((this.actualWidth - this._paddingLeft - this._paddingRight - displayObject.width) / 2);
 			}
 			if(this._verticalAlign == VERTICAL_ALIGN_TOP)
 			{
@@ -2383,7 +2457,7 @@ package feathers.controls
 			}
 			else //middle
 			{
-				displayObject.y = this._paddingTop + (this.actualHeight - this._paddingTop - this._paddingBottom - displayObject.height) / 2;
+				displayObject.y = this._paddingTop + Math.round((this.actualHeight - this._paddingTop - this._paddingBottom - displayObject.height) / 2);
 			}
 		}
 		
@@ -2407,7 +2481,7 @@ package feathers.controls
 					}
 					else if(this._verticalAlign == VERTICAL_ALIGN_MIDDLE)
 					{
-						this.labelTextRenderer.y += (this.currentIcon.height + this._gap) / 2;
+						this.labelTextRenderer.y += Math.round((this.currentIcon.height + this._gap) / 2);
 					}
 					this.currentIcon.y = this.labelTextRenderer.y - this.currentIcon.height - this._gap;
 				}
@@ -2427,7 +2501,7 @@ package feathers.controls
 					}
 					else if(this._horizontalAlign == HORIZONTAL_ALIGN_CENTER)
 					{
-						this.labelTextRenderer.x -= (this.currentIcon.width + this._gap) / 2;
+						this.labelTextRenderer.x -= Math.round((this.currentIcon.width + this._gap) / 2);
 					}
 					this.currentIcon.x = this.labelTextRenderer.x + this.labelTextRenderer.width + this._gap;
 				}
@@ -2447,7 +2521,7 @@ package feathers.controls
 					}
 					else if(this._verticalAlign == VERTICAL_ALIGN_MIDDLE)
 					{
-						this.labelTextRenderer.y -= (this.currentIcon.height + this._gap) / 2;
+						this.labelTextRenderer.y -= Math.round((this.currentIcon.height + this._gap) / 2);
 					}
 					this.currentIcon.y = this.labelTextRenderer.y + this.labelTextRenderer.height + this._gap;
 				}
@@ -2467,7 +2541,7 @@ package feathers.controls
 					}
 					else if(this._horizontalAlign == HORIZONTAL_ALIGN_CENTER)
 					{
-						this.labelTextRenderer.x += (this._gap + this.currentIcon.width) / 2;
+						this.labelTextRenderer.x += Math.round((this._gap + this.currentIcon.width) / 2);
 					}
 					this.currentIcon.x = this.labelTextRenderer.x - this._gap - this.currentIcon.width;
 				}
@@ -2485,7 +2559,7 @@ package feathers.controls
 				}
 				else
 				{
-					this.currentIcon.y = this._paddingTop + (this.actualHeight - this._paddingTop - this._paddingBottom - this.currentIcon.height) / 2;
+					this.currentIcon.y = this._paddingTop + Math.round((this.actualHeight - this._paddingTop - this._paddingBottom - this.currentIcon.height) / 2);
 				}
 			}
 			else if(this._iconPosition == ICON_POSITION_LEFT_BASELINE || this._iconPosition == ICON_POSITION_RIGHT_BASELINE)
@@ -2504,7 +2578,7 @@ package feathers.controls
 				}
 				else
 				{
-					this.currentIcon.x = this._paddingLeft + (this.actualWidth - this._paddingLeft - this._paddingRight - this.currentIcon.width) / 2;
+					this.currentIcon.x = this._paddingLeft + Math.round((this.actualWidth - this._paddingLeft - this._paddingRight - this.currentIcon.width) / 2);
 				}
 			}
 		}
@@ -2562,6 +2636,19 @@ package feathers.controls
 			_keyHandlerStage.removeEventListener(KeyboardEvent.KEY_DOWN, stage_keyDownHandler);
 			_keyHandlerStage.removeEventListener(KeyboardEvent.KEY_UP, stage_keyUpHandler);
 			_keyHandlerStage = null;
+
+			if(this.touchPointID >= 0)
+			{
+				this.touchPointID = -1;
+				if(this._isEnabled)
+				{
+					this.currentState = STATE_UP;
+				}
+				else
+				{
+					this.currentState = STATE_DISABLED;
+				}
+			}
 		}
 
 		/**

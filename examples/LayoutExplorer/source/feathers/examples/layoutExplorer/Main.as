@@ -3,11 +3,11 @@ package feathers.examples.layoutExplorer
 	import feathers.controls.Drawers;
 	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.layoutExplorer.data.HorizontalLayoutSettings;
 	import feathers.examples.layoutExplorer.data.TiledColumnsLayoutSettings;
 	import feathers.examples.layoutExplorer.data.TiledRowsLayoutSettings;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
+	import feathers.examples.layoutExplorer.screens.AnchorLayoutScreen;
 	import feathers.examples.layoutExplorer.screens.HorizontalLayoutScreen;
 	import feathers.examples.layoutExplorer.screens.HorizontalLayoutSettingsScreen;
 	import feathers.examples.layoutExplorer.screens.MainMenuScreen;
@@ -27,6 +27,7 @@ package feathers.examples.layoutExplorer
 	public class Main extends Drawers
 	{
 		private static const MAIN_MENU:String = "mainMenu";
+		private static const ANCHOR:String = "anchor";
 		private static const HORIZONTAL:String = "horizontal";
 		private static const VERTICAL:String = "vertical";
 		private static const TILED_ROWS:String = "tiledRows";
@@ -38,6 +39,7 @@ package feathers.examples.layoutExplorer
 
 		private static const MAIN_MENU_EVENTS:Object =
 		{
+			showAnchor: ANCHOR,
 			showHorizontal: HORIZONTAL,
 			showVertical: VERTICAL,
 			showTiledRows: TILED_ROWS,
@@ -47,19 +49,28 @@ package feathers.examples.layoutExplorer
 		public function Main()
 		{
 			super();
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
 
 		private var _navigator:ScreenNavigator;
 		private var _menu:MainMenuScreen;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
-		private function initializeHandler(event:Event):void
+		override protected function initialize():void
 		{
+			//never forget to call super.initialize()
+			super.initialize();
+
 			new MetalWorksMobileTheme();
 
 			this._navigator = new ScreenNavigator();
+			//we're using Drawers because we want to display the menu on the
+			//side when running on tablets.
 			this.content = this._navigator;
+
+			this._navigator.addScreen(ANCHOR, new ScreenNavigatorItem(AnchorLayoutScreen,
+			{
+				complete: MAIN_MENU
+			}));
 
 			var horizontalLayoutSettings:HorizontalLayoutSettings = new HorizontalLayoutSettings();
 			this._navigator.addScreen(HORIZONTAL, new ScreenNavigatorItem(HorizontalLayoutScreen,
@@ -135,7 +146,8 @@ package feathers.examples.layoutExplorer
 			if(DeviceCapabilities.isTablet(Starling.current.nativeStage))
 			{
 				//we don't want the screens bleeding outside the navigator's
-				//bounds when a transition is active, so clip it.
+				//bounds on top of a drawer when a transition is active, so
+				//enable clipping.
 				this._navigator.clipContent = true;
 				this._menu = new MainMenuScreen();
 				for(var eventType:String in MAIN_MENU_EVENTS)

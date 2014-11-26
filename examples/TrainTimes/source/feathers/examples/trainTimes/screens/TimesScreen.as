@@ -1,18 +1,14 @@
 package feathers.examples.trainTimes.screens
 {
 	import feathers.controls.Button;
-	import feathers.controls.Header;
 	import feathers.controls.List;
 	import feathers.controls.PanelScreen;
-	import feathers.controls.Screen;
 	import feathers.data.ListCollection;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.trainTimes.model.TimeData;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 
 	import starling.display.DisplayObject;
-
 	import starling.events.Event;
 
 	[Event(name="complete",type="starling.events.Event")]
@@ -41,14 +37,17 @@ package feathers.examples.trainTimes.screens
 
 		public function TimesScreen()
 		{
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
+			super();
 		}
 
 		private var _backButton:Button;
 		private var _list:List;
 
-		protected function initializeHandler(event:Event):void
+		override protected function initialize():void
 		{
+			//never forget to call super.initialize()
+			super.initialize();
+
 			this.layout = new AnchorLayout();
 
 			this._list = new List();

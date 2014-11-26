@@ -23,7 +23,6 @@ package feathers.examples.layoutExplorer.screens
 		public function TiledColumnsLayoutScreen()
 		{
 			super();
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
 
 		public var settings:TiledColumnsLayoutSettings;
@@ -31,8 +30,11 @@ package feathers.examples.layoutExplorer.screens
 		private var _backButton:Button;
 		private var _settingsButton:Button;
 
-		protected function initializeHandler(event:Event):void
+		override protected function initialize():void
 		{
+			//never forget to call super.initialize()
+			super.initialize();
+
 			var layout:TiledColumnsLayout = new TiledColumnsLayout();
 			layout.paging = this.settings.paging;
 			layout.horizontalGap = this.settings.horizontalGap;
@@ -45,22 +47,15 @@ package feathers.examples.layoutExplorer.screens
 			layout.verticalAlign = this.settings.verticalAlign;
 			layout.tileHorizontalAlign = this.settings.tileHorizontalAlign;
 			layout.tileVerticalAlign = this.settings.tileVerticalAlign;
-			layout.manageVisibility = true;
 
 			this.layout = layout;
 			this.snapToPages = this.settings.paging != TiledColumnsLayout.PAGING_NONE;
 			this.snapScrollPositionsToPixels = true;
 
-			var isTablet:Boolean = DeviceCapabilities.isTablet(Starling.current.nativeStage);
+			var minQuadSize:Number = Math.min(Starling.current.stage.stageWidth, Starling.current.stage.stageHeight) / 15;
 			for(var i:int = 0; i < this.settings.itemCount; i++)
 			{
-				var size:Number = (44 + 88 * Math.random()) * this.dpiScale;
-				if(isTablet)
-				{
-					//bigger for tablets, just because there's so much more room
-					//and this demo should include scrolling
-					size *= 1.5;
-				}
+				var size:Number = minQuadSize + minQuadSize * 2 * Math.random();
 				var quad:Quad = new Quad(size, size, 0xff8800);
 				this.addChild(quad);
 			}
@@ -90,6 +85,8 @@ package feathers.examples.layoutExplorer.screens
 			[
 				this._settingsButton
 			];
+
+			this.owner.addEventListener(FeathersEventType.TRANSITION_COMPLETE, owner_transitionCompleteHandler);
 		}
 
 		private function onBackButton():void
@@ -105,6 +102,12 @@ package feathers.examples.layoutExplorer.screens
 		private function settingsButton_triggeredHandler(event:Event):void
 		{
 			this.dispatchEventWith(SHOW_SETTINGS);
+		}
+
+		private function owner_transitionCompleteHandler(event:Event):void
+		{
+			this.owner.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, owner_transitionCompleteHandler);
+			this.revealScrollBars();
 		}
 	}
 }

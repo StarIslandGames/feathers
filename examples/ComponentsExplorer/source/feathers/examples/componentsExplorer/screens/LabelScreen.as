@@ -3,8 +3,6 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.Button;
 	import feathers.controls.Label;
 	import feathers.controls.PanelScreen;
-	import feathers.events.FeathersEventType;
-	import feathers.layout.VerticalLayout;
 	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
@@ -16,7 +14,7 @@ package feathers.examples.componentsExplorer.screens
 
 	public class LabelScreen extends PanelScreen
 	{
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		public function LabelScreen()
 		{
@@ -32,7 +30,7 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return LabelScreen.styleProvider;
+			return LabelScreen.globalStyleProvider;
 		}
 
 		override protected function initialize():void
@@ -69,9 +67,9 @@ package feathers.examples.componentsExplorer.screens
 				this._backButton.addEventListener(Event.TRIGGERED, backButton_triggeredHandler);
 
 				this.headerProperties.leftItems = new <DisplayObject>
-					[
-						this._backButton
-					];
+				[
+					this._backButton
+				];
 
 				this.backButtonHandler = this.onBackButton;
 			}

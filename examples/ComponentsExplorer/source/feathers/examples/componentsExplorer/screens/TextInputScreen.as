@@ -3,8 +3,6 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.Button;
 	import feathers.controls.PanelScreen;
 	import feathers.controls.TextInput;
-	import feathers.events.FeathersEventType;
-	import feathers.layout.VerticalLayout;
 	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
@@ -16,7 +14,7 @@ package feathers.examples.componentsExplorer.screens
 
 	public class TextInputScreen extends PanelScreen
 	{
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
 
 		public function TextInputScreen()
 		{
@@ -31,7 +29,7 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return TextInputScreen.styleProvider;
+			return TextInputScreen.globalStyleProvider;
 		}
 
 		override protected function initialize():void

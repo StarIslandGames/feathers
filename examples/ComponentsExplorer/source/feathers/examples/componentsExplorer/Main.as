@@ -3,7 +3,6 @@ package feathers.examples.componentsExplorer
 	import feathers.controls.Drawers;
 	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.componentsExplorer.data.EmbeddedAssets;
 	import feathers.examples.componentsExplorer.data.GroupedListSettings;
 	import feathers.examples.componentsExplorer.data.ItemRendererSettings;
@@ -91,15 +90,17 @@ package feathers.examples.componentsExplorer
 		public function Main()
 		{
 			super();
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
 
 		private var _navigator:ScreenNavigator;
 		private var _menu:MainMenuScreen;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 		
-		private function initializeHandler(event:Event):void
+		override protected function initialize():void
 		{
+			//never forget to call super.initialize()
+			super.initialize();
+
 			EmbeddedAssets.initialize();
 
 			new ComponentsExplorerTheme();
@@ -264,7 +265,8 @@ package feathers.examples.componentsExplorer
 			if(DeviceCapabilities.isTablet(Starling.current.nativeStage))
 			{
 				//we don't want the screens bleeding outside the navigator's
-				//bounds when a transition is active, so clip it.
+				//bounds on top of a drawer when a transition is active, so
+				//enable clipping.
 				this._navigator.clipContent = true;
 				this._menu = new MainMenuScreen();
 				for(var eventType:String in MAIN_MENU_EVENTS)

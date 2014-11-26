@@ -2,7 +2,6 @@ package feathers.examples.youtube
 {
 	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
-	import feathers.events.FeathersEventType;
 	import feathers.examples.youtube.models.VideoDetails;
 	import feathers.examples.youtube.models.VideoFeed;
 	import feathers.examples.youtube.models.YouTubeModel;
@@ -22,14 +21,17 @@ package feathers.examples.youtube
 
 		public function Main()
 		{
-			this.addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
+			super();
 		}
 
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 		private var _model:YouTubeModel;
 
-		private function initializeHandler(event:Event):void
+		override protected function initialize():void
 		{
+			//never forget to call super.initialize()
+			super.initialize();
+
 			new MetalWorksMobileTheme();
 
 			this._model = new YouTubeModel();

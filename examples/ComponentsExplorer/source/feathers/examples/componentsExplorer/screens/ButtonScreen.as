@@ -4,22 +4,20 @@ package feathers.examples.componentsExplorer.screens
 	import feathers.controls.ImageLoader;
 	import feathers.controls.PanelScreen;
 	import feathers.controls.ToggleButton;
-	import feathers.events.FeathersEventType;
-	import feathers.examples.componentsExplorer.data.EmbeddedAssets;
-	import feathers.layout.VerticalLayout;
 	import feathers.skins.IStyleProvider;
 	import feathers.system.DeviceCapabilities;
 
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.events.Event;
-	import starling.textures.Texture;
 
 	[Event(name="complete",type="starling.events.Event")]
 
 	public class ButtonScreen extends PanelScreen
 	{
-		public static var styleProvider:IStyleProvider;
+		public static var globalStyleProvider:IStyleProvider;
+
+		public static const CHILD_NAME_ICON_BUTTON:String = "components-explorer-button-screen-icon-button";
 		
 		public function ButtonScreen()
 		{
@@ -42,7 +40,7 @@ package feathers.examples.componentsExplorer.screens
 
 		override protected function get defaultStyleProvider():IStyleProvider
 		{
-			return ButtonScreen.styleProvider;
+			return ButtonScreen.globalStyleProvider;
 		}
 		
 		override protected function initialize():void
@@ -60,14 +58,9 @@ package feathers.examples.componentsExplorer.screens
 			this._disabledButton.isEnabled = false;
 			this.addChild(this._disabledButton);
 
-			this._icon = new ImageLoader();
-			this._icon.source = EmbeddedAssets.SKULL_ICON_DARK;
-			//the icon will be blurry if it's not on a whole pixel. ImageLoader
-			//can snap to pixels to fix that issue.
-			this._icon.snapToPixels = true;
-			this._icon.textureScale = this.dpiScale;
-
 			this._iconButton = new Button();
+			//since it's a skin, we'll specif an icon in the theme
+			this._iconButton.styleNameList.add(CHILD_NAME_ICON_BUTTON);
 			this._iconButton.label = "Icon Button";
 			this._iconButton.defaultIcon = this._icon;
 			this.addChild(this._iconButton);

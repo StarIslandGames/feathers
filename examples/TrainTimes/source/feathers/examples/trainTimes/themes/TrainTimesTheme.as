@@ -6,7 +6,6 @@ package feathers.examples.trainTimes.themes
 	import feathers.controls.ImageLoader;
 	import feathers.controls.Label;
 	import feathers.controls.List;
-	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.SimpleScrollBar;
 	import feathers.controls.renderers.DefaultListItemRenderer;
@@ -251,7 +250,6 @@ package feathers.examples.trainTimes.themes
 				this.root.addEventListener(Event.ADDED_TO_STAGE, root_addedToStageHandler);
 			}
 
-			this.setInitializerForClassAndSubclasses(Screen, screenInitializer);
 			this.setInitializerForClass(Button, buttonInitializer);
 			this.setInitializerForClass(Button, confirmButtonInitializer, StationListItemRenderer.CHILD_NAME_STATION_LIST_CONFIRM_BUTTON);
 			this.setInitializerForClass(Button, cancelButtonInitializer, StationListItemRenderer.CHILD_NAME_STATION_LIST_CANCEL_BUTTON);
@@ -297,11 +295,6 @@ package feathers.examples.trainTimes.themes
 		}
 
 		protected function nothingInitializer(target:DisplayObject):void {}
-
-		protected function screenInitializer(screen:Screen):void
-		{
-			screen.originalDPI = this._originalDPI;
-		}
 
 		protected function labelInitializer(label:Label):void
 		{
