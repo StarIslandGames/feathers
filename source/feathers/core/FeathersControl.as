@@ -1665,7 +1665,13 @@ package feathers.core
 		 */
 		public function validate():void
 		{
-			if(this._isDisposed)
+            //SIG: fixes a case with validating ListDataViewport that was removed from the stage along with the parent.
+            //Any reason to validate object that is not on stage???
+            //Case eplanation: After they were removed from the stage they both have depth = -1; validation queue is sorted by depth, so
+            //the order can be any (for objects with depth = -1); ListDataViewport.parent can be validated after ListDataViewport, therefore
+            //ListDataViewport.layer == null when ListDataViewport.draw() is called, but it is expected to be non-null.
+            //
+			if(!this._validationQueue)
 			{
 				//disposed components have no reason to validate, but they may
 				//have been left in the queue.
